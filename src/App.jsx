@@ -2,6 +2,8 @@ import './App.css'
 import Navbar from "./Components/Navbar/Navbar";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import CreateWorkOrder from "./Pages/Create-Work-Order/Create-Work-Order";
+import WaitingPayment from "./Pages/Waiting-Payment/Waiting-payment";
+import Notification from "./Pages/Notification/Notification";
 import SubNavbar from './Components/Sub-Navbars/Work-Order-Sub-Navbar/Work-Order-Sub-Navbar';
 import General from './Pages/General/General';
 import JobNotes from './Pages/Job-Notes/Job-Notes';
@@ -23,6 +25,14 @@ function App() {
     {
       path: "/Create-Work-Order",
       element: <><Navbar /> <CreateWorkOrder /></>
+    },
+    {
+      path: "/Waiting-Payment",
+      element: <><Navbar /> <WaitingPayment /></>
+    },
+    {
+      path: "/Notification",
+      element: <><Navbar /> <Notification /></>
     },
     {
       path: "/General",

@@ -1,88 +1,101 @@
 .bid-completion-container {
-    width: 80%;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
-  }
-  
-  h1 {
-    text-align: left;
-  }
-  
-  .buttons {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 20px;
-  }
-  
-  .buttons button {
-    margin-right: 15px;
-    padding: 8px 15px;
-  }
-  
-  .bid-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-  
-  .bid-table th, .bid-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-  }
-  
-  .bid-table th {
-    background-color: #f4f4f4;
-  }
-  
-  .bid-table input[type="number"],
-  .bid-table input[type="text"] {
-    width: 80%;
-    padding: 5px;
-    text-align: center;
-  }
-  
-  .totals {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  
-  .contractor-total {
-    background-color: #f2a354;
-    padding: 10px;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .client-total {
-    background-color: #4267f5;
-    padding: 10px;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .notes-section textarea,
-  .bid-sheet-section input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .action-buttons {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .action-buttons button {
-    padding: 10px 20px;
-    margin-right: 15px;
-    cursor: pointer;
-    background-color: #ddd;
-    border: none;
-  }
-  
-  .action-buttons button:hover {
-    background-color: #ccc;
-  }
-  
+  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+}
+
+.main-content {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+input[type="checkbox"],
+input[type="number"],
+input[type="text"] {
+  width: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.add-line-button {
+  margin-bottom: 20px;
+}
+
+.total-display {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.total-contractor,
+.total-client {
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.total-contractor {
+  background-color: #ffe0b2;
+}
+
+.total-client {
+  background-color: #bbdefb;
+}
+
+.comments-section,
+.client-heading-section {
+  margin-bottom: 20px;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
