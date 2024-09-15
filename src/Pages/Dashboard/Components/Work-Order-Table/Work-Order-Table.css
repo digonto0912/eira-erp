@@ -1,0 +1,42 @@
+.work-order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.work-order-table th,
+.work-order-table td {
+    border: 1px solid #ddd;
+    padding: 15px 5px;
+    text-align: left;
+}
+
+.work-order-table th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.status-badge.new {
+    background-color: #54c1a9;
+    color: white;
+}
+
+.status-badge.info-send {
+    background-color: #b6c4cf;
+    color: white;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.clickable-row:hover {
+    background-color: #f0f0f0;
+    /* Light background change on hover */
+}

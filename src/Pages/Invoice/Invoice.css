@@ -1,0 +1,95 @@
+.invoice-container {
+  width: 80%;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: left;
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.invoice-header div {
+  padding: 5px;
+}
+
+.invoice-type {
+  background-color: black;
+  color: white;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.invoice-table th, .invoice-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.invoice-table select,
+.invoice-table input[type="number"],
+.invoice-table input[type="text"] {
+  width: 100%;
+  padding: 5px;
+}
+
+.add-line {
+  margin: 20px 0;
+}
+
+.add-line button {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #ddd;
+  border: none;
+}
+
+.invoice-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.invoice-footer div {
+  padding: 10px;
+}
+
+.reference {
+  margin-top: 20px;
+}
+
+.reference label,
+.invoice-footer label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.action-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.action-buttons button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  cursor: pointer;
+  background-color: #ddd;
+  border: none;
+}
+
+.action-buttons button:hover {
+  background-color: #ccc;
+}

@@ -1,0 +1,33 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #004d4b;
+    color: white;
+    height: 56px;
+    padding: 0px 23px;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-left>h1 {
+    font-size: larger;
+}
+
+.nav-links {
+    display: flex;
+}
+
+.nav-links li {
+    list-style: none;
+    cursor: pointer;
+    padding: 0px 20px;
+}
+
+.profile-icon {
+    width: 40px;
+    border-radius: 50%;
+}
