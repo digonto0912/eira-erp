@@ -3,49 +3,180 @@ import './Create-Work-Order.css';
 
 const CreateWorkOrder = () => {
   const [formData, setFormData] = useState({
-    woNumber: '',
-    company: '',
-    name: '',
-    phone: '',
-    email: '',
-    customerNumber: '',
-    workType: '',
-    address: '',
-    city: '',
-    zip: '',
-    contractor: '',
-    rush: false,
-    lotSize: '',
-    mortgager: '',
-    checkinProvider: '',
-    receivedDate: '',
-    dueDate: '',
-    recurring: false,
-    comments: '',
-    category: '',
-    loanNumber: '',
-    state: '',
-    admin: '',
-    batf: false,
-    lockCode: '',
-    keyCode: '',
-    lockLocation: '',
-    gateCode: '',
-    startDate: '',
-    clientDueDate: '',
-  });
+    General_Page_Infos: {
+      Status_Info: "New",
+      General_Info: {
+        woNumber: "",
+        company: "",
+        name: "",
+        phone: "",
+        email: "",
+        customerNumber: "",
+        workType: "",
+        address: "",
+        city: "",
+        zip: "",
+        contractor: "",
+        rush: false,
+        lotSize: "",
+        mortgager: "",
+        checkinProvider: "",
+        receivedDate: "",
+        dueDate: "",
+        recurring: false,
+        comments: "",
+        category: "",
+        loanNumber: "",
+        state: "",
+        admin: "",
+        batf: false,
+        lockCode: "",
+        keyCode: "",
+        lockLocation: "",
+        gateCode: "",
+        startDate: "",
+        clientDueDate: ""
+      },
+      House_Front_Image: "",
+      Work_Order_Last_Tracker: {
+        Client: {
+          Client: "",
+          Date: "",
+          Seen: "",
+          Status: "Unpaid"
+        },
+        Admin: {
+          User: "",
+          Date: "",
+          Checkin: "",
+          more: "id number giver for knowing detailed"
+        }
+      },
+      Work_Order_Items: [
+        {
+          Description: "",
+          Qty: "",
+          Price: "",
+          Total: "",
+          Additional_Instructions: "",
+          Source: ""
+        },
+        {
+          Description: "",
+          Qty: "",
+          Price: "",
+          Total: "",
+          Additional_Instructions: "",
+          Source: ""
+        }
+      ]
+    },
+    Job_Notes: [
+      {
+        Note: "",
+        Date: ""
+      }
+    ],
+    Bids_Page: {
+      All_Bids: [
+        {
+          Status: -1,
+          Item_Description: "",
+          Qty: "",
+          contractor_Price: "",
+          contractor_Total: "",
+          Client_Price: "",
+          Client_Total: "",
+          Client_comments: "",
+          Completion_Total: "",
+          Completion_comments: ""
+        }
+      ],
+      Client_Total: "",
+      Contractor_Total: "",
+      Comments: "",
+      Headline: ""
+    },
+    photos_page: {
+      conditional_photos: [
+        {
+          name: "Before",
+          photos: ["list of photos url"]
+        },
+        {
+          name: "During",
+          photos: ["list of photos url"]
+        },
+        {
+          name: "After",
+          photos: ["list of photos url"]
+        }
+      ]
+    },
+    Invoice: {
+      Contractor: {
+        Rows: [
+          {
+            Item_Description: "",
+            Qty: "",
+            Price: "",
+            Total: "",
+            Adj_Price: "",
+            After_Adj_Price_Total: "",
+            Comment: ""
+          }
+        ],
+        Sub_Total: "",
+        Discount: "",
+        Total: "",
+        comment: "",
+        invoice_date: "",
+        reference: ""
+      },
+      Save_Payment: {
+        Payment_Date: "",
+        Amount: "",
+        Check: "",
+        Comment: "",
+        Charge_back: false
+      },
+      Client: {
+        Rows: [
+          {
+            Item_Description: "",
+            Qty: "",
+            Price: "",
+            Total: ""
+          }
+        ],
+        Sub_Total: "",
+        Discount: "",
+        Total: "",
+        comment: "",
+        invoice_Complete: "",
+        Credit_Memo: ""
+      }
+    }
+  }
+  );
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
-    });
+    formData.General_Page_Infos.General_Info[name] = type === 'checkbox' ? checked : value
+    console.log(formData);
+
+    setFormData(
+      ...formData
+    );
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    console.log(formData);
+
+
     try {
       const response = await fetch('http://localhost:3001/api/create-work-order', {
         method: 'POST',
@@ -54,9 +185,9 @@ const CreateWorkOrder = () => {
         },
         body: JSON.stringify(formData),
       });
-      
+
       const result = await response.json();
-      
+
       if (response.ok) {
         console.log('Work order created:', result);
         // Optionally reset the form or show a success message
@@ -67,7 +198,7 @@ const CreateWorkOrder = () => {
       console.error('Error submitting the form:', error);
     }
   };
-  
+
 
   return (
     <form className="work-order-form" onSubmit={handleSubmit}>
@@ -231,7 +362,7 @@ const CreateWorkOrder = () => {
         </div>
       </div>
 
-      
+
 
       <div className="form-actions">
         <button type="submit">Save</button>
