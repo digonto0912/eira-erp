@@ -164,17 +164,13 @@ const CreateWorkOrder = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     formData.General_Page_Infos.General_Info[name] = type === 'checkbox' ? checked : value
-    console.log(formData);
 
-    setFormData(
-      ...formData
-    );
+    setFormData(formData);
   };
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
 
 
     try {

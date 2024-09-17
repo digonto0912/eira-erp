@@ -1,30 +1,69 @@
+.work-order-container-dashboard{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
 .work-order-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.work-order-table > tbody {
+    height: 20px;
+    background: #fff;
+    display: block;
+    overflow: auto;
+    flex-grow: 1;
+}
+
+thead, tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
 }
 
 .work-order-table th,
 .work-order-table td {
-    border: 1px solid #ddd;
-    padding: 15px 5px;
+    padding: 16px 5px;
     text-align: left;
+    border: none;
+    border-bottom: 1px solid #0000006e;
 }
 
 .work-order-table th {
-    background-color: #f2f2f2;
-    color: #333;
+    background-color: #28bf9721;
+    color: #000000;
+    border: none;
+    text-align: left;
+    padding-top: 20px;
+    padding-bottom: 16px;
+    font-weight: 500;
 }
 
 .status-badge {
     padding: 5px 10px;
     border-radius: 20px;
     font-weight: bold;
+    width: 100%;
+    height: 36px;
+    display: grid;
+    text-align: center;
+    align-items: center;
 }
 
 .status-badge.new {
     background-color: #54c1a9;
     color: white;
+    width: 100%;
+    height: 34px;
+    display: grid;
+    text-align: center;
+    align-items: center;
 }
 
 .status-badge.info-send {
@@ -39,4 +78,9 @@
 .clickable-row:hover {
     background-color: #f0f0f0;
     /* Light background change on hover */
+}
+
+.clickable-row>td {
+    font-size: 13px;
+    font-weight: 500;
 }

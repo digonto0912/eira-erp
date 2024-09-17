@@ -49,6 +49,7 @@ function WorkOrderTable() {
   };
 
   return (
+    <div className="work-order-container-dashboard">
     <table className="work-order-table">
       <thead>
         <tr>
@@ -68,6 +69,7 @@ function WorkOrderTable() {
           <th>Work Type</th>
         </tr>
       </thead>
+      <div style={{height:"5px"}}></div>
       <tbody>
         {workOrdersColumn.map((order, index) => (
           <tr key={index} className="clickable-row" onClick={() => handleRowClick()}>
@@ -89,6 +91,7 @@ function WorkOrderTable() {
         ))}
       </tbody>
     </table>
+    </div>
   );
 }
 

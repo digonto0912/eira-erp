@@ -1,5 +1,6 @@
 import './App.css'
 import Navbar from "./Components/Navbar/Navbar";
+import DashboardSubNavbar from "./Components/Sub-Navbars/Dashboard-Sub-Navbars/Dashboard-Sub-Navbar";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import CreateWorkOrder from "./Pages/Create-Work-Order/Create-Work-Order";
 import WaitingPayment from "./Pages/Waiting-Payment/Waiting-payment";
@@ -10,6 +11,7 @@ import JobNotes from './Pages/Job-Notes/Job-Notes';
 import BidCompletionNotes from './Pages/Bid-Completion-Notes/Bid-Completion-Notes';
 import PhotosDocuments from './Pages/Photos-Documents/Photos-Documents';
 import Invoice from './Pages/Invoice/Invoice';
+import WorkOrder from "./Pages/temp page/tempfile";
 import { 
   createBrowserRouter,
   RouterProvider
@@ -20,7 +22,11 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <><Navbar /> <Dashboard /></>
+      element: <><Navbar /> <DashboardSubNavbar /> <Dashboard /></>
+    },
+    {
+      path: "/WorkOrder",
+      element: <><Navbar /> <WorkOrder /></>
     },
     {
       path: "/Create-Work-Order",

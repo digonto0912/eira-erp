@@ -6,7 +6,7 @@ import Pagination from './Components/Pagination/Pagination';
 function App() {
   return (
     <div>
-      <div className="container">
+      <div className="dashboard-container">
         <div className='title-and-add-btn'>
           <h1>Work Orders</h1>
           <button className="add-new-btn">Add New +</button>

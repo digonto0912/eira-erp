@@ -1,6 +1,21 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: "Assistant", sans-serif;
+  font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 400;
+  font-weight: 600;
   font-style: normal;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+.mt-100 {
+  margin-top: 100px;
+}
+
+.d-flex {
+  display: flex;
 }

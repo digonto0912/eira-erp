@@ -1,0 +1,30 @@
+.sub-navbar {
+  display: flex;
+  justify-content: start;
+  background-color: #bdbdbd2b;
+  padding: 7px 8px 6px 13px;
+  height: 37px;
+}
+
+.Dashboard-nav-item {
+  background-color: white;
+  border: none;
+  padding: 4px 6px;
+  margin-right: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: #000;
+  width: 73px;
+  text-align: center;
+}
+
+.nav-item.active {
+  background-color: black;
+  color: white;
+}
+
+.nav-item:hover {
+  background-color: #e0e0e0;
+}

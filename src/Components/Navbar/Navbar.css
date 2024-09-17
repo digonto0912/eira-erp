@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #004d4b;
+    background-image: linear-gradient(42deg, #021613, #137850, #1CAF7F, #0B3038, #157E62, #082529, #116D58, #1AA26F, #1AA26F, #1AA26F, #0B5E40, #000E0C);
     color: white;
     height: 56px;
     padding: 0px 23px;
@@ -11,20 +11,42 @@
 .navbar-left {
     display: flex;
     align-items: center;
+    gap: 13px;
 }
 
 .navbar-left>h1 {
-    font-size: larger;
+    width: 57px;
+    font-size: 1.23rem;
+    font-weight: 600;
+    margin: 0;
 }
 
+.active-nav-btn{
+    background-image: linear-gradient(0deg, #ffffff00, #ffffff2e);
+    padding-left: 0px !important;
+    border-bottom: 3.75px solid #FFFFFF;
+    font-weight: 600 !important;
+    color: #B8C4D3;
+    padding-top: 4px;
+    font-size: 14px !important;
+}
 .nav-links {
     display: flex;
+    padding: 0;
+    margin: 0;
 }
 
 .nav-links li {
     list-style: none;
     cursor: pointer;
-    padding: 0px 20px;
+    padding-left: 27px;
+    font-size: 13.1px;
+    font-weight: 300;
+    width: 130px;
+    height: 56px;
+    text-align: center;
+    display: grid;
+    align-items: center;
 }
 
 .profile-icon {

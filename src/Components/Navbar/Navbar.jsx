@@ -11,7 +11,7 @@ function Navbar() {
         <ul className="nav-links">
 
           <Link to="/">
-            <li>Dashboard</li>
+            <li className='active-nav-btn'>Dashboard</li>
           </Link>
           <Link to="/Create-Work-Order">
             <li>New Work Order</li>
