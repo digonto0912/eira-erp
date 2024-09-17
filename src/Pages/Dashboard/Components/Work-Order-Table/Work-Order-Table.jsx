@@ -1,96 +1,109 @@
-import React from 'react';
-import "./Work-Order-Table.css";
-import { useNavigate } from 'react-router-dom'; // Use useNavigate instead of useHistory
+import React, { useState, useEffect, useRef } from 'react';
+import './Work-Order-Table.css';
+import { useNavigate } from 'react-router-dom';
 
-const workOrdersColumn = [
-  {
-    status: 'New',
-    statusCls: 'new',
-    wo: 'TO031863641',
-    dueDate: '08-15-24',
-    receivedDate: '08-15-24',
-    client: 'Guardian',
-    customer: 0,
-    loan: 'XXXXXX6568',
-    address: '24 E99th Pl',
-    city: 'Chicago',
-    state: 'IL',
-    zip: '60628',
-    contractor: 'Valerie Nelson',
-    admin: 'Simon Saiful',
-    workType: 'Bid'
-  },
-  {
-    status: 'InfoSend',
-    statusCls: 'info-send',
-    wo: 'TO031863641',
-    dueDate: '08-15-24',
-    receivedDate: '08-15-24',
-    client: 'Guardian',
-    customer: 0,
-    loan: 'XXXXXX6568',
-    address: '24 E99th Pl',
-    city: 'Chicago',
-    state: 'IL',
-    zip: '60628',
-    contractor: 'Valerie Nelson',
-    admin: 'Simon Saiful',
-    workType: 'Bid'
-  },
-  // Repeat similar objects for other rows
-];
 
 function WorkOrderTable() {
-  const navigate = useNavigate(); // Replace useHistory with useNavigate
+  const navigate = useNavigate();
+
+  // All work Orders Datas
+  const [AllWorkOrders, setAllWorkOrders] = useState()
+
+  // Calling All Work Orders Data Api
+  useEffect(() => {
+    fetch("http://localhost:3001/getWorkOrder")
+      .then((res) => res.json())
+      .then((data) => setAllWorkOrders(data))
+  }, [])
+
+  console.log(AllWorkOrders)
+
+  // Use refs to access the elements after render
+  const boxRef = useRef(null);
+  const theadRef = useRef(null);
 
   // Function to handle row click and navigate
   const handleRowClick = () => {
     navigate(`/General`);
   };
 
+  // Function to check scrollbar visibility
+  const checkScrollbar = () => {
+
+    const box = boxRef.current;
+    const thead = theadRef.current;
+
+    if (box && thead) {
+      const hasScrollbar = box.scrollHeight > box.clientHeight;
+
+
+      if (hasScrollbar) {
+        thead.classList.add('scroll-on');
+        thead.classList.remove('scroll-off');
+      } else {
+        thead.classList.add('scroll-off');
+        thead.classList.remove('scroll-on');
+      }
+    }
+  };
+
+  // UseEffect to check scrollbar on mount and on resize
+  useEffect(() => {
+    checkScrollbar(); // Initial check
+  }, [AllWorkOrders]);
+
   return (
     <div className="work-order-container-dashboard">
-    <table className="work-order-table">
-      <thead>
-        <tr>
-          <th>Status</th>
-          <th>WO#</th>
-          <th>Date Due</th>
-          <th>Data Received</th>
-          <th>Client</th>
-          <th>Customer</th>
-          <th>Loan#</th>
-          <th>Address</th>
-          <th>City</th>
-          <th>State</th>
-          <th>Zip</th>
-          <th>Contractor</th>
-          <th>Admin</th>
-          <th>Work Type</th>
-        </tr>
-      </thead>
-      <div style={{height:"5px"}}></div>
-      <tbody>
-        {workOrdersColumn.map((order, index) => (
-          <tr key={index} className="clickable-row" onClick={() => handleRowClick()}>
-            <td><span className={`status-badge ${order.statusCls}`}>{order.status}</span></td>
-            <td>{order.wo}</td>
-            <td>{order.dueDate}</td>
-            <td>{order.receivedDate}</td>
-            <td>{order.client}</td>
-            <td>{order.customer}</td>
-            <td>{order.loan}</td>
-            <td>{order.address}</td>
-            <td>{order.city}</td>
-            <td>{order.state}</td>
-            <td>{order.zip}</td>
-            <td>{order.contractor}</td>
-            <td>{order.admin}</td>
-            <td>{order.workType}</td>
+      <table id="table-box" className="work-order-table">
+        <div className="top-head-background"></div>
+        <thead ref={theadRef} id="thead" className="scroll-off">
+          <tr>
+            <th className="dashboard-table-checkbox"><input type="checkbox" name="checkbox" /></th>
+            <th>Status</th>
+            <th>WO#</th>
+            <th>Date Due</th>
+            <th>Data Received</th>
+            <th>Client</th>
+            <th>Customer</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+            <th>Contractor</th>
+            <th>Admin</th>
+            <th>Work Type</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody ref={boxRef}>
+          {AllWorkOrders?.map((order, index) => {
+            // Correctly declare the variable here
+            const generalInfo = order.General_Page_Infos.General_Info;
+
+            // Explicitly return the JSX
+            return (
+              <tr key={index} className="clickable-row">
+                <td className="dashboard-table-checkbox"><input type="checkbox" name="checkbox" /></td>
+                <td onClick={handleRowClick}>
+                  <span className={`status-badge ${generalInfo.statusCls}`}>{generalInfo.status}</span>
+                </td>
+                <td onClick={handleRowClick}>{generalInfo.woNumber}</td>
+                <td onClick={handleRowClick}>{generalInfo.dueDate}</td>
+                <td onClick={handleRowClick}>{generalInfo.receivedDate}</td>
+                <td onClick={handleRowClick}>{generalInfo.name}</td>
+                <td onClick={handleRowClick}>{generalInfo.customerNumber}</td>
+                <td onClick={handleRowClick}>{generalInfo.address}</td>
+                <td onClick={handleRowClick}>{generalInfo.city}</td>
+                <td onClick={handleRowClick}>{generalInfo.state}</td>
+                <td onClick={handleRowClick}>{generalInfo.zip}</td>
+                <td onClick={handleRowClick}>{generalInfo.contractor}</td>
+                <td onClick={handleRowClick}>{generalInfo.admin}</td>
+                <td onClick={handleRowClick}>{generalInfo.workType}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+
+      </table>
     </div>
   );
 }

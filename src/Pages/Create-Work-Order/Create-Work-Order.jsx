@@ -3,9 +3,12 @@ import './Create-Work-Order.css';
 
 const CreateWorkOrder = () => {
   const [formData, setFormData] = useState({
+    Work_Order_Creating_Date:new Date(),
     General_Page_Infos: {
       Status_Info: "New",
       General_Info: {
+        status: 'New',
+        statusCls: 'new',
         woNumber: "",
         company: "",
         name: "",

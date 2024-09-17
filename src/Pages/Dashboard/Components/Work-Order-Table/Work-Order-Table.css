@@ -1,8 +1,13 @@
-.work-order-container-dashboard{
+.work-order-container-dashboard {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    box-shadow: #eeffedb5 0px 8px 24px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
 }
+
 .work-order-table {
     width: 100%;
     border-collapse: collapse;
@@ -11,20 +16,65 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
-.work-order-table > tbody {
+.work-order-table>tbody {
     height: 20px;
     background: #fff;
     display: block;
     overflow: auto;
     flex-grow: 1;
 }
+.top-head-background{
+    height: 55px;
+    width: 100%;
+    background: #28bf9721;
+    position: absolute;
+    z-index: 0;
+}
+thead{
+    z-index: 1;
+    display: table;
+    /* width: calc(100% - 25px); */
+    table-layout: fixed;
+}
 
-thead, tbody tr {
+.scroll-off{
+    width: 100%;
+}
+
+.scroll-on{
+    width: calc(100% - 25px);
+}
+
+tbody tr {
     display: table;
     width: 100%;
     table-layout: fixed;
+}
+
+thead tr {
+    width: calc(100% - 17px);
+}
+
+.dashboard-table-checkbox{
+    width: 50px;
+    text-align: center;
+    padding: 0;
+}
+.dashboard-table-checkbox > input{
+    width: 20px;
+    height: 20px;
+    margin: 0;
+}
+
+th,
+td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
 }
 
 .work-order-table th,
@@ -36,7 +86,7 @@ thead, tbody tr {
 }
 
 .work-order-table th {
-    background-color: #28bf9721;
+    background-color: #28bf9700;
     color: #000000;
     border: none;
     text-align: left;

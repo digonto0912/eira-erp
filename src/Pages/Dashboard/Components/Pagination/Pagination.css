@@ -1,10 +1,44 @@
+.pagination-root {
+    position: relative;
+    height: 60px;
+    width: 100%;
+}
 .pagination {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 0;
-    width: 50%;
-    margin-top: auto;
+    width: 597px;
+    margin-top: 23px;
+    border-radius: 10px;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+}
+
+.pagination>div {
+    display: flex;
+    width: -webkit-fill-available;
+    gap: 5px;
+    align-items: center;
+    background: #ba002bcf;
+    color: white;
+    padding: 9px 6px;
+    font-size: 16px;
+    height: 37px;
+}
+
+.pagination>div>select {
+    width: 62px;
+}
+
+.pagination>span {
+    height: 37px;
+    text-align: center;
+    align-items: center;
+    display: grid;
+    color: white;
+    background: #c73053;
+    margin: 0 5px;
 }
 
 .pagination select {
@@ -20,8 +54,27 @@
 .pagination-btn {
     margin: 0 5px;
     padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
+    background-color: #ffffff;
     border: none;
     cursor: pointer;
+    border-radius: 5px;
+    color: #000000;
+    font-size: 16px;
+    text-align: center;
+}
+.pagination-pages-btn {
+    background: none;
+    border: none;
+    color: wheat;
+    font-size: 16px;
+}
+.pagination-pages-btn-active {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #ffffff7d;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
 }
