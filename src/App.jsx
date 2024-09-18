@@ -11,7 +11,7 @@ import JobNotes from './Pages/Job-Notes/Job-Notes';
 import BidCompletionNotes from './Pages/Bid-Completion-Notes/Bid-Completion-Notes';
 import PhotosDocuments from './Pages/Photos-Documents/Photos-Documents';
 import Invoice from './Pages/Invoice/Invoice';
-import WorkOrder from "./Pages/temp page/tempfile";
+import FilterBox from "./Pages/temp page/FilterBox";
 import { 
   createBrowserRouter,
   RouterProvider
@@ -26,7 +26,7 @@ function App() {
     },
     {
       path: "/WorkOrder",
-      element: <><Navbar /> <WorkOrder /></>
+      element: <><Navbar /> <FilterBox /></>
     },
     {
       path: "/Create-Work-Order",
@@ -41,7 +41,7 @@ function App() {
       element: <><Navbar /> <Notification /></>
     },
     {
-      path: "/General",
+      path: "/General/:id",
       element: <><Navbar /> <SubNavbar /> <General /></>
     },
     {

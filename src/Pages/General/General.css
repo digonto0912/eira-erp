@@ -1,111 +1,134 @@
 .work-order-container {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: #f4f4f4;
-  }
-  
-  .work-order-header {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .work-order-body {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  
-  .work-order-details {
-    width: 45%;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
-  
-  .form-group {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  
-  label {
-    font-weight: bold;
-    margin-right: 10px;
-  }
-  
-  input, textarea {
-    width: 60%;
-    padding: 5px;
-  }
-  
-  textarea {
-    resize: none;
-    height: 80px;
-  }
-  
-  /* Right Half */
-  .general-page-right-half{
-    width: 45%;
-    padding: 20px;
-  }
-  .work-order-status {
-    background: #e0f7fa;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
-  
-  .date-info {
-    margin-top: 10px;
-  }
-  
-  .image-section {
-    width: 100%;
-    margin-top: 81px;
-  }
+  font-family: Arial, sans-serif;
+  padding: 41px;
+  padding-top: 35px;
+}
 
-  .imageBG{
-    height: 100px;
-    background: #d0d0d0;
-    display: grid;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .image-section img {
-    width: 100%;
-    border-radius: 8px;
-  }
-  
-  .check-in-section {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-  }
-  
-  .work-order-items {
-    width: 100%;
-    margin-top: 20px;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  table th, table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  table th {
-    background-color: #f2f2f2;
-  }
-  
-  .work-order-items tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-  
+.work-order-header>h1 {
+  font-size: 50px;
+  font-weight: 400;
+  margin-bottom: 40px;
+}
+
+.work-order-body {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.work-order-top-part {
+  background: #e3e3e38c;
+  padding: 17px;
+  border-radius: 10px;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 45px;
+}
+
+.work-order-details {
+  width: 95%;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: grid;
+  gap: 50px;
+}
+
+.work-order-details>div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.general-form-group > input,
+.general-form-group > textarea {
+  width: 332px !important;
+}
+
+label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+input,
+textarea {
+  width: 60%;
+  padding: 5px;
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+/* Right Half */
+.general-page-right-half {
+  width: 45%;
+}
+
+.work-order-status {
+  background: #e0f7fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.date-info {
+  margin-top: 10px;
+}
+
+.image-section {
+  width: 100%;
+  margin-top: 81px;
+}
+
+.imageBG {
+  height: 100px;
+  background: #d0d0d0;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-section img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.check-in-section {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.work-order-items {
+  width: 100%;
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+table th {
+  background-color: #f2f2f2;
+}
+
+.work-order-items tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}

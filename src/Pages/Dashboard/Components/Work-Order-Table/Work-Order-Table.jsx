@@ -7,25 +7,36 @@ function WorkOrderTable() {
   const navigate = useNavigate();
 
   // All work Orders Datas
-  const [AllWorkOrders, setAllWorkOrders] = useState()
-
-  // Calling All Work Orders Data Api
-  useEffect(() => {
-    fetch("http://localhost:3001/getWorkOrder")
-      .then((res) => res.json())
-      .then((data) => setAllWorkOrders(data))
-  }, [])
-
-  console.log(AllWorkOrders)
+  const [AllWorkOrders, setAllWorkOrders] = useState(null)
 
   // Use refs to access the elements after render
   const boxRef = useRef(null);
   const theadRef = useRef(null);
 
+
+  // Calling All Work Orders Data Api
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/api/work-orders");
+        const data = await response.json();
+        setAllWorkOrders(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData(); // Call the async function on component mount
+  }, []); // Empty dependency array ensures one-time fetch
+
+  console.log(AllWorkOrders)
+
   // Function to handle row click and navigate
-  const handleRowClick = () => {
-    navigate(`/General`);
+  const handleRowClick = (id) => {
+    // console.log(id?.id);
+    navigate(`/General/${id}`);
   };
+
 
   // Function to check scrollbar visibility
   const checkScrollbar = () => {
@@ -46,11 +57,11 @@ function WorkOrderTable() {
       }
     }
   };
-
   // UseEffect to check scrollbar on mount and on resize
   useEffect(() => {
     checkScrollbar(); // Initial check
   }, [AllWorkOrders]);
+
 
   return (
     <div className="work-order-container-dashboard">
@@ -83,21 +94,21 @@ function WorkOrderTable() {
             return (
               <tr key={index} className="clickable-row">
                 <td className="dashboard-table-checkbox"><input type="checkbox" name="checkbox" /></td>
-                <td onClick={handleRowClick}>
+                <td onClick={() => handleRowClick(order.id)}>
                   <span className={`status-badge ${generalInfo.statusCls}`}>{generalInfo.status}</span>
                 </td>
-                <td onClick={handleRowClick}>{generalInfo.woNumber}</td>
-                <td onClick={handleRowClick}>{generalInfo.dueDate}</td>
-                <td onClick={handleRowClick}>{generalInfo.receivedDate}</td>
-                <td onClick={handleRowClick}>{generalInfo.name}</td>
-                <td onClick={handleRowClick}>{generalInfo.customerNumber}</td>
-                <td onClick={handleRowClick}>{generalInfo.address}</td>
-                <td onClick={handleRowClick}>{generalInfo.city}</td>
-                <td onClick={handleRowClick}>{generalInfo.state}</td>
-                <td onClick={handleRowClick}>{generalInfo.zip}</td>
-                <td onClick={handleRowClick}>{generalInfo.contractor}</td>
-                <td onClick={handleRowClick}>{generalInfo.admin}</td>
-                <td onClick={handleRowClick}>{generalInfo.workType}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.woNumber}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.dueDate}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.receivedDate}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.name}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.customerNumber}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.address}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.city}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.state}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.zip}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.contractor}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.admin}</td>
+                <td onClick={() => handleRowClick(order.id)}>{generalInfo.workType}</td>
               </tr>
             );
           })}

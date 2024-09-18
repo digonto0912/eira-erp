@@ -177,7 +177,7 @@ const CreateWorkOrder = () => {
 
 
     try {
-      const response = await fetch('http://localhost:3001/api/create-work-order', {
+      const response = await fetch('http://localhost:3001/api/work-orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
