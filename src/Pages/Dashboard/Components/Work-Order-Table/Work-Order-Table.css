@@ -33,10 +33,9 @@
     position: absolute;
     z-index: 0;
 }
-thead{
+#dashboard-thead{
     z-index: 1;
     display: table;
-    /* width: calc(100% - 25px); */
     table-layout: fixed;
 }
 
@@ -48,13 +47,13 @@ thead{
     width: calc(100% - 25px);
 }
 
-tbody tr {
+#dashboard-tbody tr {
     display: table;
     width: 100%;
     table-layout: fixed;
 }
 
-thead tr {
+#dashboard-thead tr {
     width: calc(100% - 17px);
 }
 

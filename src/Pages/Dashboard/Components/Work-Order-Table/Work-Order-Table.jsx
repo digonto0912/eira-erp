@@ -67,7 +67,7 @@ function WorkOrderTable() {
     <div className="work-order-container-dashboard">
       <table id="table-box" className="work-order-table">
         <div className="top-head-background"></div>
-        <thead ref={theadRef} id="thead" className="scroll-off">
+        <thead ref={theadRef} id="dashboard-thead" className="scroll-off">
           <tr>
             <th className="dashboard-table-checkbox"><input type="checkbox" name="checkbox" /></th>
             <th>Status</th>
@@ -85,7 +85,7 @@ function WorkOrderTable() {
             <th>Work Type</th>
           </tr>
         </thead>
-        <tbody ref={boxRef}>
+        <tbody ref={boxRef} id="dashboard-tbody">
           {AllWorkOrders?.map((order, index) => {
             // Correctly declare the variable here
             const generalInfo = order.General_Page_Infos.General_Info;

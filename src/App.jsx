@@ -45,19 +45,19 @@ function App() {
       element: <><Navbar /> <SubNavbar /> <General /></>
     },
     {
-      path: "/Job-Notes",
+      path: "/Job-Notes/:id",
       element: <><Navbar /> <SubNavbar /> <JobNotes /></>
     },
     {
-      path: "/Bid-Completion-Notes",
+      path: "/Bid-Completion-Notes/:id",
       element: <><Navbar /> <SubNavbar /> <BidCompletionNotes /></>
     },
     {
-      path: "/Photos-Documents",
+      path: "/Photos-Documents/:id",
       element: <><Navbar /> <SubNavbar /> <PhotosDocuments /></>
     },
     {
-      path: "/Invoice",
+      path: "/Invoice/:id",
       element: <><Navbar /> <SubNavbar /> <Invoice /></>
     },
   ])

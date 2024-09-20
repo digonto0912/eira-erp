@@ -7,22 +7,43 @@ const General = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [workOrderDetails, setWorkOrderDetails] = useState(null);
   const [updatedDetails, setUpdatedDetails] = useState(null);
+  const [workOrderItems, setWorkOrderItems] = useState([]);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [newItem, setNewItem] = useState({
+    Description: '',
+    Qty: 0,
+    Price: 0,
+    Total: 0,
+    Additional_Instructions: '',
+    Source: '',
+  });
+  const [editingItem, setEditingItem] = useState({
+    Description: '',
+    Qty: 0,
+    Price: 0,
+    Total: 0,
+    Additional_Instructions: '',
+    Source: '',
+  });
+  const [buttonsDisabled, setButtonsDisabled] = useState(false); // New state for disabling buttons
 
-  // Fetch Work Order Data
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`http://localhost:3001/api/work-orders/${params.id}`);
-        const data = await response.json();
-        setWorkOrderDetails(data);
-        setUpdatedDetails(data.General_Page_Infos.General_Info); // Initialize update state with the fetched data
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData(); // Call the async function on component mount
+    fetchData();
   }, [params.id]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/work-orders/${params.id}`
+      );
+      const data = await response.json();
+      setWorkOrderDetails(data);
+      setUpdatedDetails(data.General_Page_Infos.General_Info);
+      setWorkOrderItems(data.General_Page_Infos.Work_Order_Items || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,6 +53,15 @@ const General = () => {
     }));
   };
 
+  // Function to disable buttons for 3 seconds
+  const disableButtonsTemporarily = () => {
+    setButtonsDisabled(true);
+    setTimeout(() => {
+      setButtonsDisabled(false);
+    }, 1500);
+  };
+
+  // Save general info updates
   const handleSave = async () => {
     try {
       const response = await fetch(`http://localhost:3001/update/${params.id}`, {
@@ -39,13 +69,21 @@ const General = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ General_Page_Infos: { General_Info: updatedDetails } }),
+        body: JSON.stringify({
+          General_Page_Infos: {
+            General_Info: updatedDetails,
+            House_Front_Image: workOrderDetails.General_Page_Infos.House_Front_Image,
+            Work_Order_Last_Tracker: workOrderDetails.General_Page_Infos.Work_Order_Last_Tracker,
+            Work_Order_Items: workOrderItems,
+          },
+        }),
       });
 
       if (response.ok) {
         const updatedData = await response.json();
         setWorkOrderDetails(updatedData);
-        setIsEditing(false); // Exit edit mode after saving
+        setIsEditing(false);
+        fetchData(); // Refresh data to sync state with the database
       } else {
         console.error('Error updating data');
       }
@@ -54,12 +92,101 @@ const General = () => {
     }
   };
 
+  // Work Order Item Functions
+  const handleAddItem = async () => {
+    disableButtonsTemporarily(); // Disable buttons for 3 seconds
+    const updatedItems = [...workOrderItems, newItem];
+    setWorkOrderItems(updatedItems);
+    setNewItem({
+      Description: '',
+      Qty: 0,
+      Price: 0,
+      Total: 0,
+      Additional_Instructions: '',
+      Source: '',
+    });
+    await updateWorkOrderItemsInDatabase(updatedItems);
+  };
+
+  const handleEditItem = (index) => {
+    disableButtonsTemporarily(); // Disable buttons for 3 seconds
+    setEditingIndex(index);
+    setEditingItem(workOrderItems[index]);
+  };
+
+  const handleSaveItem = async (index) => {
+    disableButtonsTemporarily(); // Disable buttons for 3 seconds
+    const updatedItems = [...workOrderItems];
+    updatedItems[index] = editingItem;
+    setWorkOrderItems(updatedItems);
+    setEditingIndex(null);
+    setEditingItem({
+      Description: '',
+      Qty: 0,
+      Price: 0,
+      Total: 0,
+      Additional_Instructions: '',
+      Source: '',
+    });
+    await updateWorkOrderItemsInDatabase(updatedItems);
+  };
+
+  const handleDeleteItem = async (index) => {
+    disableButtonsTemporarily(); // Disable buttons for 3 seconds
+    const updatedItems = workOrderItems.filter((_, i) => i !== index);
+    setWorkOrderItems(updatedItems);
+    await updateWorkOrderItemsInDatabase(updatedItems);
+  };
+
+  const handleNewItemInputChange = (e, field) => {
+    setNewItem({
+      ...newItem,
+      [field]: e.target.value,
+    });
+  };
+
+  const handleEditingItemInputChange = (e, field) => {
+    setEditingItem({
+      ...editingItem,
+      [field]: e.target.value,
+    });
+  };
+
+  const updateWorkOrderItemsInDatabase = async (updatedItems) => {
+    try {
+      const response = await fetch(`http://localhost:3001/update/${params.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          General_Page_Infos: {
+            General_Info: updatedDetails,
+            House_Front_Image: workOrderDetails.General_Page_Infos.House_Front_Image,
+            Work_Order_Last_Tracker: workOrderDetails.General_Page_Infos.Work_Order_Last_Tracker,
+            Work_Order_Items: updatedItems,
+          },
+        }),
+      });
+
+      if (response.ok) {
+        const updatedData = await response.json();
+        setWorkOrderDetails(updatedData);
+        setIsEditing(false);
+        fetchData(); // Sync the latest data from the server after each operation
+      } else {
+        console.error('Error updating items in the database');
+      }
+    } catch (error) {
+      console.error('Error updating work order items:', error);
+    }
+  };
+
   if (!workOrderDetails) {
     return <div>Loading...</div>;
   }
 
   let generalInfo = updatedDetails;
-  console.log(generalInfo)
 
   return (
     <div className="work-order-container">
@@ -68,6 +195,7 @@ const General = () => {
       </div>
 
       <div className="work-order-body">
+
         <div className="work-order-top-part">
           {/* Left Section for Work Order Details */}
           <div className="work-order-details">
@@ -366,6 +494,7 @@ const General = () => {
         {/* Work Order Item Details */}
         <div className="work-order-items">
           <h3>Work Order Item Details</h3>
+
           <table>
             <thead>
               <tr>
@@ -375,29 +504,169 @@ const General = () => {
                 <th>Total</th>
                 <th>Additional Instructions</th>
                 <th>Source</th>
+                <th></th>
+                <th>+</th>
               </tr>
             </thead>
             <tbody>
+              {workOrderItems?.map((item, index) => (
+                <tr key={index}>
+                  <td>
+                    {editingIndex === index ? (
+                      <input
+                        value={editingItem.Description}
+                        onChange={(e) =>
+                          handleEditingItemInputChange(e, 'Description')
+                        }
+                        disabled={buttonsDisabled} // Disable buttons
+                      />
+                    ) : (
+                      item.Description
+                    )}
+                  </td>
+                  <td>
+                    {editingIndex === index ? (
+                      <input
+                        value={editingItem.Qty}
+                        onChange={(e) =>
+                          handleEditingItemInputChange(e, 'Qty')
+                        }
+                        disabled={buttonsDisabled} // Disable buttons
+                      />
+                    ) : (
+                      item.Qty
+                    )}
+                  </td>
+                  <td>
+                    {editingIndex === index ? (
+                      <input
+                        value={editingItem.Price}
+                        onChange={(e) =>
+                          handleEditingItemInputChange(e, 'Price')
+                        }
+                        disabled={buttonsDisabled} // Disable buttons
+                      />
+                    ) : (
+                      item.Price
+                    )}
+                  </td>
+                  <td>
+                    {editingIndex === index ? (
+                      <input
+                        value={editingItem.Total}
+                        onChange={(e) =>
+                          handleEditingItemInputChange(e, 'Total')
+                        }
+                        disabled={buttonsDisabled} // Disable buttons
+                      />
+                    ) : (
+                      item.Total
+                    )}
+                  </td>
+                  <td>
+                    {editingIndex === index ? (
+                      <input
+                        value={editingItem.Additional_Instructions}
+                        onChange={(e) =>
+                          handleEditingItemInputChange(e, 'Additional_Instructions')
+                        }
+                        disabled={buttonsDisabled} // Disable buttons
+                      />
+                    ) : (
+                      item.Additional_Instructions
+                    )}
+                  </td>
+                  <td>
+                    {editingIndex === index ? (
+                      <input
+                        value={editingItem.Source}
+                        onChange={(e) =>
+                          handleEditingItemInputChange(e, 'Source')
+                        }
+                        disabled={buttonsDisabled} // Disable buttons
+                      />
+                    ) : (
+                      item.Source
+                    )}
+                  </td>
+                  <td>
+                    {editingIndex === index ? (
+                      <button onClick={() => handleSaveItem(index)} disabled={buttonsDisabled}>
+                        Save
+                      </button>
+                    ) : (
+                      <button onClick={() => handleEditItem(index)} disabled={buttonsDisabled}>
+                        Edit
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    <button onClick={() => handleDeleteItem(index)} disabled={buttonsDisabled}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
               <tr>
-                <td>All Conditions Photos</td>
-                <td>0</td>
-                <td>0.00</td>
-                <td>0.00</td>
-                <td></td>
-                <td>Auto</td>
-              </tr>
-              <tr>
-                <td>Obtaining Bid</td>
-                <td>1</td>
-                <td>0.00</td>
-                <td>0.00</td>
-                <td>Provide bid for fascia repair, clear gutter, fence repair, roof tarp, and roof repair.</td>
-                <td>Import</td>
+                <td>
+                  <input
+                    value={newItem.Description}
+                    onChange={(e) => handleNewItemInputChange(e, 'Description')}
+                    placeholder="New Description"
+                    disabled={buttonsDisabled}
+                  />
+                </td>
+                <td>
+                  <input
+                    value={newItem.Qty}
+                    onChange={(e) => handleNewItemInputChange(e, 'Qty')}
+                    placeholder="New Qty"
+                    disabled={buttonsDisabled}
+                  />
+                </td>
+                <td>
+                  <input
+                    value={newItem.Price}
+                    onChange={(e) => handleNewItemInputChange(e, 'Price')}
+                    placeholder="New Price"
+                    disabled={buttonsDisabled}
+                  />
+                </td>
+                <td>
+                  <input
+                    value={newItem.Total}
+                    onChange={(e) => handleNewItemInputChange(e, 'Total')}
+                    placeholder="New Total"
+                    disabled={buttonsDisabled}
+                  />
+                </td>
+                <td>
+                  <input
+                    value={newItem.Additional_Instructions}
+                    onChange={(e) =>
+                      handleNewItemInputChange(e, 'Additional_Instructions')
+                    }
+                    placeholder="New Instructions"
+                    disabled={buttonsDisabled}
+                  />
+                </td>
+                <td>
+                  <input
+                    value={newItem.Source}
+                    onChange={(e) => handleNewItemInputChange(e, 'Source')}
+                    placeholder="New Source"
+                    disabled={buttonsDisabled}
+                  />
+                </td>
+                <td colSpan="2">
+                  <button onClick={handleAddItem} disabled={buttonsDisabled}>
+                    Add
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
   );

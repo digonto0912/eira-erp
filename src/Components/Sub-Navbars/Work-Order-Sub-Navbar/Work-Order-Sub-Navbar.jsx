@@ -1,25 +1,53 @@
 import React from 'react';
 import './Work-Order-Sub-Navbar.css';
-import { Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 
 const WorkOrderSubNavbar = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const handleButtonClick = (path) => {
+    // Ensure you use the absolute path
+    navigate(`${path}/${id}`);
+  };
+
   return (
     <div className="sub-navbar">
-      <a href={"General"}>
-        <button className="general-nav-item active">General Info</button>
-      </a>
-      <a href={"Job-Notes"}>
-        <button className="general-nav-item">Job Notes</button>
-      </a>
-      <a href="/Bid-Completion-Notes">
-        <button className="general-nav-item">Bid / Completion Info</button>
-      </a>
-      <a href="/Photos-Documents">
-        <button className="general-nav-item">Photos / Documents</button>
-      </a>
-      <a href="/Invoice">
-        <button className="general-nav-item">Invoice</button>
-      </a>
+
+      <button
+        onClick={() => handleButtonClick("/General")}
+        className="general-nav-item"
+      >
+        General Info
+      </button>
+      
+      <button
+        onClick={() => handleButtonClick("/Job-Notes")}
+        className="general-nav-item"
+      >
+        Job Notes
+      </button>
+      
+      <button
+        onClick={() => handleButtonClick("/Bid-Completion-Notes")}
+        className="general-nav-item"
+      >
+        Bid / Completion Info
+      </button>
+      
+      <button
+        onClick={() => handleButtonClick("/Photos-Documents")}
+        className="general-nav-item"
+      >
+        Photos / Documents
+      </button>
+      
+      <button
+        onClick={() => handleButtonClick("/Invoice")}
+        className="general-nav-item"
+      >
+        Invoice
+      </button>
     </div>
   );
 };
