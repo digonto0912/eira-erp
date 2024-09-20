@@ -66,7 +66,7 @@ const General = () => {
   const handleSave = async () => {
     try {
       const response = await fetch(`http://localhost:3001/work-orders/${params.id}`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -153,14 +153,12 @@ const General = () => {
     });
   };
 
-  // updating and creting database
+  // updating and creting database {here creating, deleteing and editing both are PUT because they just make change under a single file. not making new collection or a new file in a collection}
   const updateWorkOrderItemsInDatabase = async (updatedItems) => {
     try {
       const response = await fetch(`http://localhost:3001/work-orders/${params.id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           General_Page_Infos: {
             General_Info: updatedDetails,

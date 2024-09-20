@@ -38,13 +38,15 @@ const BidCompletionNotes = () => {
 
   const handleAddLine = () => {
     const newBids = {
+      Common: 0,
+      Status: 0,
       description: '',
       Qty: 0,
       contractor_Price: 0,
       Client_Price: 0,
-      client_Comment: "",
+      Client_comments: "",
       Completion_Total: 0,
-      Completion_Comment: ""
+      Completion_comments: ""
     };
     setAllBids([...allBids, newBids]);
   };
@@ -63,26 +65,32 @@ const BidCompletionNotes = () => {
 
   const handleSave = async () => {
     // Filter bids where Qty > 0 and retain their index (offset by the length of items)
+    console.log("allBids-> ", allBids);
+
     const filteredBids = allBids
       .map((bid, index) => ({ ...bid, index }))
-      .filter((bid) => bid.Qty > 0);
+      .filter((bid) => bid.Qty > 0 || bid.Common === 1);
 
     // Prepare the payload for the API call
     const All_Bids = filteredBids.map((item) => ({
       index: item.index,
+      Common: item.Common,
+      Status: item.Status,
       description: item.description,
       Qty: item.Qty,
       contractor_Price: item.contractor_Price,
       Client_Price: item.Client_Price,
+      Client_comments:item.Client_comments,
       Completion_Total: item.Completion_Total,
-      client_Comment: item.client_Comment,
-      Completion_Comment: item.Completion_Comment
+      Completion_comments: item.Completion_comments,
     }))
+    console.log(All_Bids);
+
 
     // Make an API call to save the data
     try {
       const response = await fetch(`http://localhost:3001/work-orders/${params.id}`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -126,7 +134,7 @@ const BidCompletionNotes = () => {
         <div className="button-group">
           <div>
             <button onClick={handleSave}>Save</button>
-            <button>Cancel</button>
+            <button onClick={()=>{location.reload()}}>Cancel</button>
           </div>
           <div>
             <button>Done</button>
@@ -192,9 +200,9 @@ const BidCompletionNotes = () => {
                 </td>
                 <td>{(bid.Qty * bid.Client_Price).toFixed(2)}</td>
                 <td><input
-                  value={bid?.client_Comment}
+                  value={bid?.Client_comments}
                   type="text"
-                  onChange={(e) => handleBidChange(index, 'client_Comment', e.target.value)}
+                  onChange={(e) => handleBidChange(index, 'Client_comments', e.target.value)}
                 /></td>
                 <td>
                   <input
@@ -204,9 +212,9 @@ const BidCompletionNotes = () => {
                   />
                 </td>
                 <td><input
-                  value={bid?.Completion_Comment}
+                  value={bid?.Completion_comments}
                   type="text"
-                  onChange={(e) => handleBidChange(index, 'Completion_Comment', e.target.value)}
+                  onChange={(e) => handleBidChange(index, 'Completion_comments', e.target.value)}
                 /></td>
               </tr>
             ))}

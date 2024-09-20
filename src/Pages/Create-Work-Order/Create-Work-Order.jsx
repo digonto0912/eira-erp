@@ -104,8 +104,9 @@ const CreateWorkOrder = () => {
       All_Bids: common_Bids_Items.map((item, index) => {
         return (
           {
+            Common:1,
             Status: 0,
-            Item_Description: item.item,
+            description: item.item,
             Qty: 0,
             contractor_Price: 0,
             Client_Price: 0,
