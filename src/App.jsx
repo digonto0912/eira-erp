@@ -3,6 +3,7 @@ import Navbar from "./Components/Navbar/Navbar";
 import DashboardSubNavbar from "./Components/Sub-Navbars/Dashboard-Sub-Navbars/Dashboard-Sub-Navbar";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import CreateWorkOrder from "./Pages/Create-Work-Order/Create-Work-Order";
+import ControlPanel from './Pages/Control-Panel/Control-Panel';
 import WaitingPayment from "./Pages/Waiting-Payment/Waiting-payment";
 import Notification from "./Pages/Notification/Notification";
 import SubNavbar from './Components/Sub-Navbars/Work-Order-Sub-Navbar/Work-Order-Sub-Navbar';
@@ -31,6 +32,10 @@ function App() {
     {
       path: "/Create-Work-Order",
       element: <><Navbar /> <CreateWorkOrder /></>
+    },
+    {
+      path: "/Control-Panel",
+      element: <><Navbar /> <ControlPanel /></>
     },
     {
       path: "/Waiting-Payment",

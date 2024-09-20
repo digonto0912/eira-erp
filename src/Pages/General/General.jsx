@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import './General.css';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const General = () => {
@@ -62,9 +62,10 @@ const General = () => {
   };
 
   // Save general info updates
+  // creating in database
   const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/update/${params.id}`, {
+      const response = await fetch(`http://localhost:3001/work-orders/${params.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -152,9 +153,10 @@ const General = () => {
     });
   };
 
+  // updating and creting database
   const updateWorkOrderItemsInDatabase = async (updatedItems) => {
     try {
-      const response = await fetch(`http://localhost:3001/update/${params.id}`, {
+      const response = await fetch(`http://localhost:3001/work-orders/${params.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

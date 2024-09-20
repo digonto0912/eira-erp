@@ -16,7 +16,9 @@ function Navbar() {
           <Link to="/Create-Work-Order">
             <li>New Work Order</li>
           </Link>
-          <li>Control Panel</li>
+          <Link to="/Control-Panel">
+            <li>Control Panel</li>
+          </Link>
           <Link to="/Waiting-Payment">
             <li>Waiting Payment</li>
           </Link>

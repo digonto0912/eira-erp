@@ -1,9 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './Create-Work-Order.css';
 
 const CreateWorkOrder = () => {
-  const [formData, setFormData] = useState({
-    Work_Order_Creating_Date:new Date(),
+
+  // Prepare the payload for a complete Future Work-Order
+  const formData = useRef({});
+  const [common_Bids_Items, setCommon_Bids_Items] = useState([]);
+
+  useEffect(() => {
+    fetch_Common_Bids_Items();
+  }, []);
+
+  const fetch_Common_Bids_Items = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/bid-items');
+      if (!response.ok) throw new Error('Failed to fetch bid items');
+      const data = await response.json();
+      setCommon_Bids_Items(data || []);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const complete_data_payload = {
+    Work_Order_Creating_Date: new Date(),
     General_Page_Infos: {
       Status_Info: "New",
       General_Info: {
@@ -81,22 +101,22 @@ const CreateWorkOrder = () => {
       }
     ],
     Bids_Page: {
-      All_Bids: [
-        {
-          Status: -1,
-          Item_Description: "",
-          Qty: "",
-          contractor_Price: "",
-          contractor_Total: "",
-          Client_Price: "",
-          Client_Total: "",
-          Client_comments: "",
-          Completion_Total: "",
-          Completion_comments: ""
-        }
-      ],
-      Client_Total: "",
-      Contractor_Total: "",
+      All_Bids: common_Bids_Items.map((item, index) => {
+        return (
+          {
+            Status: 0,
+            Item_Description: item.item,
+            Qty: 0,
+            contractor_Price: 0,
+            Client_Price: 0,
+            Client_comments: "",
+            Completion_Total: 0,
+            Completion_comments: ""
+          }
+        );
+      }),
+      Client_Total: 0,
+      Contractor_Total: 0,
       Comments: "",
       Headline: ""
     },
@@ -161,14 +181,16 @@ const CreateWorkOrder = () => {
       }
     }
   }
-  );
 
+  // sending the payload to formData for sending to db
+  formData.current  = complete_data_payload
 
+  // others functions
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    formData.General_Page_Infos.General_Info[name] = type === 'checkbox' ? checked : value
+    formData.current.General_Page_Infos.General_Info[name] = type === 'checkbox' ? checked : value
 
-    setFormData(formData);
+    formData.current(formData);
   };
 
 
@@ -182,7 +204,7 @@ const CreateWorkOrder = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData.current),
       });
 
       const result = await response.json();
