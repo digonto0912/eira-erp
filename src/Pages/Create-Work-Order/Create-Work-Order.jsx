@@ -104,6 +104,7 @@ const CreateWorkOrder = () => {
       All_Bids: common_Bids_Items.map((item, index) => {
         return (
           {
+            _id: Date.now() * Math.random(),
             Common:1,
             Status: 0,
             description: item.item,

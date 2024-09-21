@@ -1,0 +1,8 @@
+muloto items gular id diye indexing nakore amra map index diye tader k naming kortechi tar jonno bortomaner somosshata jodi id thakto tahole icche moto id dekhe dekhe editen, delete kora jeto.
+
+
+data save successfully 16 time but -1 never be 0 after click undo
+
+problems in :
+never set any rendom id number,
+& never jurge the function with own logic calculation

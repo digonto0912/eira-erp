@@ -12,7 +12,6 @@ const BidCompletionNotes = () => {
   const [comments, setComments] = useState('');
   const [clientBidSheetHeading, setClientBidSheetHeading] = useState('');
   const [checkedBids, setCheckedBids] = useState([]); // State to track checked bids
-  const [showPastCompletion, setShowPastCompletion] = useState(false);
   const [showPastBids, setShowPastBids] = useState(false);
 
 
@@ -42,6 +41,7 @@ const BidCompletionNotes = () => {
 
   const handleAddLine = () => {
     const newBids = {
+      _id: Date.now() * Math.random(),
       Common: 0,
       Status: 0,
       description: '',
@@ -71,12 +71,10 @@ const BidCompletionNotes = () => {
   const handleSave = async () => {
     console.log("handleSave");
 
-    const filteredBids = allBids
-      .map((bid, index) => ({ ...bid, index }))
-      .filter((bid) => bid.Qty > 0 || bid.Common === 1);
+    const filteredBids = allBids.filter((bid) => bid.Qty > 0 || bid.Common === 1);
 
     const All_Bids = filteredBids.map((item) => ({
-      index: item.index,
+      _id: item._id,
       Common: item.Common,
       Status: item.Status,
       description: item.description,
@@ -120,9 +118,7 @@ const BidCompletionNotes = () => {
   const handleStatusSave = async (updatedBids) => {
     const new_added_items = updatedBids.slice(originalAllBids.length, updatedBids.length)
 
-    const filtered_new_added_items = new_added_items
-      .map((bid, index) => ({ ...bid, index }))
-      .filter((bid) => bid.Status != 0 && bid.description != "");
+    const filtered_new_added_items = new_added_items.filter((bid) => bid.Status != 0 && bid.description != "");
 
     if (!filtered_new_added_items) {
       return
@@ -131,12 +127,10 @@ const BidCompletionNotes = () => {
     const updatedBidsInRange = updatedBids.slice(0, originalAllBids.length)
     const all_selected_Bids = [...updatedBidsInRange, ...filtered_new_added_items]
 
-    const filteredBids = all_selected_Bids
-      .map((bid, index) => ({ ...bid, index }))
-      .filter((bid) => bid.Qty > 0 || bid.Common === 1);
+    const filteredBids = all_selected_Bids.filter((bid) => bid.Qty > 0 || bid.Common === 1);
 
     const All_Bids = filteredBids.map((item) => ({
-      index: item.index,
+      _id: item._id,
       Common: item.Common,
       Status: item.Status,
       description: item.description,
@@ -147,8 +141,6 @@ const BidCompletionNotes = () => {
       Completion_Total: item.Completion_Total,
       Completion_comments: item.Completion_comments,
     }));
-
-    console.log(All_Bids);
 
     try {
       const response = await fetch(`http://localhost:3001/work-orders/${params.id}`, {
@@ -178,18 +170,20 @@ const BidCompletionNotes = () => {
   };
 
   // Handle checkbox changes
-  const handleCheckboxChange = (index) => {
-    if (checkedBids.includes(index)) {
-      setCheckedBids(checkedBids.filter((i) => i !== index));
+  const handleCheckboxChange = (_id) => {
+    if (checkedBids.includes(_id)) {
+      // removing checkmarked from history
+      setCheckedBids(checkedBids.filter((value) => value !== _id));
     } else {
-      setCheckedBids([...checkedBids, index]);
+      // adding checkmarked from history
+      setCheckedBids([...checkedBids, _id]);
     }
   };
-
+  
   // Update status when "Done" is clicked
   const handleDoneClick = () => {
-    const updatedBids = allBids.map((bid, index) => {
-      if (checkedBids.includes(index) && bid.description != "" && bid.Qty > 0) {
+    const updatedBids = allBids.map((bid) => {
+      if (checkedBids.includes(bid._id) && bid.description != "" && bid.Qty > 0) {
         return { ...bid, Status: 1 };
       }
       return bid;
@@ -204,8 +198,8 @@ const BidCompletionNotes = () => {
 
   // Update status when "Delete" is clicked
   const handleDeleteClick = () => {
-    const updatedBids = allBids.map((bid, index) => {
-      if (checkedBids.includes(index)) {
+    const updatedBids = allBids.map((bid) => {
+      if (checkedBids.includes(bid._id)) {
         return { ...bid, Status: -1 };
       }
       return bid;
@@ -214,6 +208,67 @@ const BidCompletionNotes = () => {
 
     handleStatusSave(updatedBids);
   };
+
+
+
+  const handleUndoDeleteSave = async (updatedBids) => {
+    const All_Bids = updatedBids.map((item, _id) => ({
+      _id: item._id,
+      Common: item.Common,
+      Status: item.Status,
+      description: item.description,
+      Qty: item.Qty,
+      contractor_Price: item.contractor_Price,
+      Client_Price: item.Client_Price,
+      Client_comments: item.Client_comments,
+      Completion_Total: item.Completion_Total,
+      Completion_comments: item.Completion_comments,
+    }));
+
+    try {
+      const response = await fetch(`http://localhost:3001/work-orders/${params.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          Bids_Page: {
+            All_Bids,
+            Client_Total: totalClient,
+            Comments: workOrderDetails.Bids_Page.All_Bids.Comments,
+            Contractor_Total: totalContractor,
+            Headline: workOrderDetails.Bids_Page.All_Bids.Headline,
+          },
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Data saved successfully');
+      } else {
+        console.error('Failed to save data');
+      }
+    } catch (error) {
+      console.error('Error saving data:', error);
+    }
+  };
+
+  // Undo function - sets the bid's status back to 0
+  const handleUndo = (_id) => {
+    const updatedBids = [...allBids];
+    const index = updatedBids.findIndex(bid => bid._id === _id);
+    updatedBids[index].Status = 0; // Set status to 0 (undo)
+    setAllBids(updatedBids);
+    handleUndoDeleteSave(updatedBids);
+  };
+
+  // Permanent delete function - removes the bid completely from the database
+  const handlePermanentDelete = async (_id) => {
+    const updatedBids = [...allBids].filter((value) => value._id !== _id); // Remove the bid from the local state
+    setAllBids(updatedBids);
+    handleUndoDeleteSave(updatedBids)
+  };
+
+
 
   if (!workOrderDetails) {
     return <div>Loading...</div>;
@@ -224,144 +279,94 @@ const BidCompletionNotes = () => {
       <h1>Bid Completion Notes</h1>
 
       <div className="button-group">
-        <button onClick={() => setShowPastCompletion(!showPastCompletion)}>
-          Show Past Completions
-        </button>
-        <button onClick={() => setShowPastBids(!showPastBids)}>
-          Show Past Bids
-        </button>
+        <button onClick={() => setShowPastBids(!showPastBids)}>Show Past Bids</button>
       </div>
 
-      {showPastCompletion && (
-        <div className="past-completion">
-          <h2>Already Complete</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>DESCRIPTION</th>
-                <th>QTY</th>
-                <th colSpan="2">CONTRACTOR</th>
-                <th colSpan="3">CLIENT</th>
-                <th colSpan="2">Completion Info</th>
-              </tr>
-              <tr>
-                <th></th>
-                <th></th>
-                <th>CONTRACTOR PRICE</th>
-                <th>CONTRACTOR TOTAL</th>
-                <th>CLIENT PRICE</th>
-                <th>CLIENT TOTAL</th>
-                <th>CLIENT COMMENTS</th>
-                <th>Completion QTY</th>
-                <th>Completion COMMENTS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {allBids
-                .filter(bid => bid.Status === 1) // Show only items with Status 1
-                .map((bid, index) => (
-                  <tr key={index}>
-                    <td>{bid.description}</td>
-                    <td>{bid.Qty}</td>
-                    <td>{bid.contractor_Price}</td>
-                    <td>{(bid.contractor_Price * bid.Qty).toFixed(2)}</td>
-                    <td>{bid.Client_Price}</td>
-                    <td>{(bid.Client_Price * bid.Qty).toFixed(2)}</td>
-                    <td>{bid.Client_comments}</td>
-                    <td>{bid.Completion_Total}</td>
-                    <td>{bid.Completion_comments}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <div>
+        {showPastBids && (
+          <div className="past-bids">
+            <h2>Completion</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>DESCRIPTION</th>
+                  <th>QTY</th>
+                  <th>CONTRACTOR PRICE</th>
+                  <th>CONTRACTOR TOTAL</th>
+                  <th>CLIENT PRICE</th>
+                  <th>CLIENT TOTAL</th>
+                  <th>CLIENT COMMENTS</th>
+                  <th>Completion QTY</th>
+                  <th>Completion COMMENTS</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allBids
+                  .filter((bid) => bid.Status === 1) // Show only items with Status 1
+                  .map((bid, index) => (
+                    <tr key={bid._id}>
+                      <td>{bid.Status}</td>
+                      <td>{bid.description}</td>
+                      <td>{bid.Qty}</td>
+                      <td>{bid.contractor_Price}</td>
+                      <td>{(bid.contractor_Price * bid.Qty).toFixed(2)}</td>
+                      <td>{bid.Client_Price}</td>
+                      <td>{(bid.Client_Price * bid.Qty).toFixed(2)}</td>
+                      <td>{bid.Client_comments}</td>
+                      <td>{bid.Completion_Total}</td>
+                      <td>{bid.Completion_comments}</td>
+                      <td>
+                        <button onClick={() => handleUndo(bid._id)}>Undo</button>
+                        <button onClick={() => handlePermanentDelete(bid._id)}>Permanent Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
 
-      {showPastBids && (
-        <div className="past-bids">
-          <h2>Completion</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>DESCRIPTION</th>
-                <th>QTY</th>
-                <th colSpan="2">CONTRACTOR</th>
-                <th colSpan="3">CLIENT</th>
-                <th colSpan="2">Completion Info</th>
-              </tr>
-              <tr>
-                <th></th>
-                <th></th>
-                <th>CONTRACTOR PRICE</th>
-                <th>CONTRACTOR TOTAL</th>
-                <th>CLIENT PRICE</th>
-                <th>CLIENT TOTAL</th>
-                <th>CLIENT COMMENTS</th>
-                <th>Completion QTY</th>
-                <th>Completion COMMENTS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {allBids
-                .filter(bid => bid.Status === 1) // Show only items with Status 1
-                .map((bid, index) => (
-                  <tr key={index}>
-                    <td>{bid.description}</td>
-                    <td>{bid.Qty}</td>
-                    <td>{bid.contractor_Price}</td>
-                    <td>{(bid.contractor_Price * bid.Qty).toFixed(2)}</td>
-                    <td>{bid.Client_Price}</td>
-                    <td>{(bid.Client_Price * bid.Qty).toFixed(2)}</td>
-                    <td>{bid.Client_comments}</td>
-                    <td>{bid.Completion_Total}</td>
-                    <td>{bid.Completion_comments}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-
-          <h2>Deleted</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>DESCRIPTION</th>
-                <th>QTY</th>
-                <th colSpan="2">CONTRACTOR</th>
-                <th colSpan="3">CLIENT</th>
-                <th colSpan="2">Completion Info</th>
-              </tr>
-              <tr>
-                <th></th>
-                <th></th>
-                <th>CONTRACTOR PRICE</th>
-                <th>CONTRACTOR TOTAL</th>
-                <th>CLIENT PRICE</th>
-                <th>CLIENT TOTAL</th>
-                <th>CLIENT COMMENTS</th>
-                <th>Completion QTY</th>
-                <th>Completion COMMENTS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {allBids
-                .filter(bid => bid.Status === -1) // Show only items with Status -1
-                .map((bid, index) => (
-                  <tr key={index}>
-                    <td>{bid.description}</td>
-                    <td>{bid.Qty}</td>
-                    <td>{bid.contractor_Price}</td>
-                    <td>{(bid.contractor_Price * bid.Qty).toFixed(2)}</td>
-                    <td>{bid.Client_Price}</td>
-                    <td>{(bid.Client_Price * bid.Qty).toFixed(2)}</td>
-                    <td>{bid.Client_comments}</td>
-                    <td>{bid.Completion_Total}</td>
-                    <td>{bid.Completion_comments}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+            <h2>Deleted</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>DESCRIPTION</th>
+                  <th>QTY</th>
+                  <th>CONTRACTOR PRICE</th>
+                  <th>CONTRACTOR TOTAL</th>
+                  <th>CLIENT PRICE</th>
+                  <th>CLIENT TOTAL</th>
+                  <th>CLIENT COMMENTS</th>
+                  <th>Completion QTY</th>
+                  <th>Completion COMMENTS</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allBids
+                  .filter((bid) => bid.Status === -1) // Show only items with Status -1
+                  .map((bid) => (
+                    <tr key={bid._id}>
+                      <td>{bid.Status}</td>
+                      <td>{bid.description}</td>
+                      <td>{bid.Qty}</td>
+                      <td>{bid.contractor_Price}</td>
+                      <td>{(bid.contractor_Price * bid.Qty).toFixed(2)}</td>
+                      <td>{bid.Client_Price}</td>
+                      <td>{(bid.Client_Price * bid.Qty).toFixed(2)}</td>
+                      <td>{bid.Client_comments}</td>
+                      <td>{bid.Completion_Total}</td>
+                      <td>{bid.Completion_comments}</td>
+                      <td>
+                        <button onClick={() => handleUndo(bid._id)}>Undo</button>
+                        <button onClick={() => handlePermanentDelete(bid._id)}>Permanent Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
 
 
@@ -402,18 +407,18 @@ const BidCompletionNotes = () => {
           </thead>
           <tbody>
             {allBids.map((bid, index) => {
-
-              if (bid.Status === -1) {
+              
+              if (bid.Status === -1 || bid.Status === 1) {
                 return
               }
 
               return (
-                <tr key={index}>
+                <tr key={bid._id}>
                   <td>
                     <input
                       type="checkbox"
-                      checked={checkedBids.includes(index)}
-                      onChange={() => handleCheckboxChange(index)}
+                      checked={checkedBids.includes(bid._id)}
+                      onChange={() => handleCheckboxChange(bid._id)}
                     />
                   </td>
                   <td>
