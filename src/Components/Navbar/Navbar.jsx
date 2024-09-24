@@ -1,6 +1,7 @@
-import React from 'react';
 import "./Navbar.css";
+import React from 'react';
 import { Link } from 'react-router-dom';
+import user_default from "../../../public/Images/Navbar/user-default.png";
 
 function Navbar() {
 
@@ -10,7 +11,7 @@ function Navbar() {
         <h1>EIRA™</h1>
         <ul className="nav-links">
 
-          <Link to="/">
+          <Link to="/Dashboard">
             <li className='active-nav-btn'>Dashboard</li>
           </Link>
           <Link to="/Create-Work-Order">
@@ -30,7 +31,7 @@ function Navbar() {
       </div>
       <div className="navbar-right">
         <span>Simon Saiful</span>
-        <img src="profile_icon.png" alt="Profile" className="profile-icon" />
+        <img src={user_default} alt="Profile" className="profile-icon" />
       </div>
     </nav>
   );

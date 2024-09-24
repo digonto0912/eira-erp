@@ -1,7 +1,14 @@
 .invoice-container {
-  width: 80%;
-  margin: 0 auto;
-  font-family: Arial, sans-serif;
+  padding: 30px 40px;
+}
+.invoice-container > h1 {
+  font-size: 50px;
+}
+
+.payment-invoice-container > div{
+  background: #f6f6f6a3;
+  padding: 30px;
+  border-radius: 10px;
 }
 
 h1 {
@@ -32,7 +39,8 @@ h1 {
   margin-bottom: 20px;
 }
 
-.invoice-table th, .invoice-table td {
+.invoice-table th,
+.invoice-table td {
   border: 1px solid #ddd;
   padding: 10px;
   text-align: center;
@@ -56,8 +64,12 @@ h1 {
   border: none;
 }
 
-.invoice-footer {
+.client-invoice-footer {
   display: flex;
+  justify-content: space-between;
+}
+
+.invoice-footer {
   justify-content: space-between;
   margin-top: 20px;
 }

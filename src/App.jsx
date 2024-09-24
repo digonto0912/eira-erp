@@ -13,21 +13,44 @@ import BidCompletionNotes from './Pages/Bid-Completion-Notes/Bid-Completion-Note
 import PhotosDocuments from './Pages/Photos-Documents/Photos-Documents';
 import Invoice from './Pages/Invoice/Invoice';
 import FilterBox from "./Pages/temp page/FilterBox";
+import FilterBox2 from "./Pages/temp page/invoice";
+import MainButton from './Pages/Main-Button/Main-Button';
 import { 
   createBrowserRouter,
   RouterProvider
 } from 'react-router-dom';
+import UserType from './Pages/User-type/User-type';
+import SignUpPage from './Pages/Signup-Page/Signup-Page';
+import LoginPage from './Pages/Login-Page/Login-Page';
 
 function App() {
 
   const router = createBrowserRouter([
     {
+      // temp file
       path: "/",
+      element: <><MainButton /></>
+    },
+    {
+      path: "/DashBoard",
       element: <><Navbar /> <DashboardSubNavbar /> <Dashboard /></>
     },
     {
+      path: "/User-Type/:Input_Type",
+      element: <><UserType /></>
+    },
+    {
+      path: "/Signup/:type",
+      element: <><SignUpPage /></>
+    },
+    {
+      path: "/Login/:type",
+      element: <><LoginPage /></>
+    },
+    {
+      // temp file
       path: "/WorkOrder",
-      element: <><Navbar /> <FilterBox /></>
+      element: <><Navbar /> <FilterBox /> <FilterBox2 /> </>
     },
     {
       path: "/Create-Work-Order",

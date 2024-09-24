@@ -1,0 +1,63 @@
+/* SelectionPage.css */
+.selection-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #d1ff76, #58ffb0, #f8ff5e); /* Background gradient */
+    background-size: cover;
+    position: relative;
+  }
+  
+  .back-arrow {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  .button-container {
+    display: flex;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.1); /* Transparent box */
+    padding: 20px 30px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+  }
+  
+  .btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .btn:hover {
+    transform: scale(1.05);
+  }
+  
+  .field-worker-btn {
+    background-color: #ffffff;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .office-admin-btn {
+    background-color: #007bff;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+  }
+  
+  .client-btn {
+    background-color: #28a745;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+  }
+  
