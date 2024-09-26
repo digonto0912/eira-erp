@@ -455,14 +455,28 @@ const General = () => {
           {/* Right Section for Office and Image Status */}
           <div className="general-page-right-half">
             <div className="work-order-status">
-              <h2>Ready for Office</h2>
-              <input type="checkbox" checked readOnly />
-              <div className="date-info">
-                <p>08-17-2024 12:28 PM by Valerie Nelson</p>
+              <div>
+                <div className='status-check status-check-with-checkbox'>
+                  <h2>Ready for Office</h2>
+                  <input type="checkbox"/>
+                </div>
+                <div className="date-info">
+                  <p>08-17-2024 12:28 PM by Valerie Nelson</p>
+                </div>
               </div>
-              <div className="other-status">
+              <div>
+                <div className='status-check'>
+                  <h2>Estimated Complete Date :</h2>
+                </div>
+                <div className="date-info">
+                  <p>08-17-2024 12:28 PM by Valerie Nelson</p>
+                </div>
+              </div>
+              <div className='status-check status-check-with-checkbox'>
                 <label>Office Locked</label>
                 <input type="checkbox" />
+              </div>
+              <div className='status-check status-check-with-checkbox'>
                 <label>Freeze Property</label>
                 <input type="checkbox" />
               </div>

@@ -6,6 +6,15 @@
     color: white;
     height: 56px;
     padding: 0px 23px;
+
+    /* 2nd type */
+    /* display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-image: linear-gradient(238deg, #0a2104, #18480b);
+    color: white;
+    height: 56px;
+    padding: 0px 23px; */
 }
 
 .navbar-left {

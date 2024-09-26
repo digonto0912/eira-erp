@@ -19,10 +19,24 @@ const SignUpPage = () => {
     confirmPassword: '',
   });
 
+  const [errors, setErrors] = useState({});
+  const [emailSent, setEmailSent] = useState(false);
+
   const navigate = useNavigate();
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  // Email validation using regex
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Check if password and confirmPassword match
+  const validatePasswords = () => {
+    return formData.password === formData.confirmPassword;
   };
 
   const handleChange = (e) => {
@@ -35,10 +49,29 @@ const SignUpPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform validation checks here (e.g., password match, required fields)
+    let validationErrors = {};
+
+    // Email format validation
+    if (!validateEmail(formData.email)) {
+      validationErrors.email = "Invalid email format";
+    }
+
+    // Password match validation
+    if (!validatePasswords()) {
+      validationErrors.password = "Passwords do not match";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
     try {
-      // Replace the URL with your actual backend endpoint
+
+      // now send the email verification
+      sendEmailVerification();
+
+      // signup endpoint
       const response = await fetch(`http://localhost:3001/users/${type.toLowerCase()}`, {
         method: 'POST',
         headers: {
@@ -46,19 +79,38 @@ const SignUpPage = () => {
         },
         body: JSON.stringify(formData),
       });
-      console.log(response);
-      
+
       if (response.ok) {
-        // Handle successful signup
         alert('Signup successful!');
-        navigate('/Login'); // Redirect to login page or another page
+        navigate(`/Login/${type}`); // Redirect to login page or another page
       } else {
-        // Handle errors
         alert('Failed to sign up, please try again.');
       }
     } catch (error) {
       console.error('Error during signup:', error);
       alert('An error occurred during signup.');
+    }
+  };
+
+  const sendEmailVerification = async () => {
+    try {
+      // Send email verification request to your backend
+      const response = await fetch('http://localhost:3001/verify-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: formData.email }),
+      });
+
+      if (response.ok) {
+        setEmailSent(true);
+        alert('Verification email sent successfully.');
+      } else {
+        alert('Failed to send verification email.');
+      }
+    } catch (error) {
+      console.error('Error sending verification email:', error);
     }
   };
 
@@ -97,6 +149,7 @@ const SignUpPage = () => {
               <div>
                 <label>Email</label>
                 <input type="email" name="email" value={formData.email} onChange={handleChange} />
+                {errors.email && <span className="error">{errors.email}</span>}
               </div>
               <div>
                 <label>Address</label>
@@ -113,6 +166,7 @@ const SignUpPage = () => {
               <div>
                 <label>Password</label>
                 <input type="password" name="password" value={formData.password} onChange={handleChange} />
+                {errors.password && <span className="error">{errors.password}</span>}
               </div>
               <div>
                 <label>Confirm Password</label>
@@ -127,7 +181,9 @@ const SignUpPage = () => {
         </div>
         <div className="button-group">
           <button type="submit" className="btn signup-btn">Sign Up</button>
-          <button type="button" className="btn login-btn" onClick={() => navigate('/Login')}>Log In</button>
+          <p>
+            You already have an account! please <button type="button" className="btn login-btn" onClick={() => navigate('/User-Type/Login')}>Log In</button>
+          </p>
         </div>
       </form>
     );
@@ -140,6 +196,7 @@ const SignUpPage = () => {
         <h1>Welcome Sir</h1>
         <p>Please fill out crucial information fields.</p>
         {InputForms()}
+        {emailSent && <p>A verification email has been sent to {formData.email}. Please verify your email.</p>}
       </div>
       <div className="image-container">
         <img src={img} alt="side image" className="sidebar-image" />

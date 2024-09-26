@@ -24,16 +24,15 @@
   color: #333;
 }
 
-h1 {
-  font-size: 36px;
-  color: #2d2273;
-  margin-bottom: 8px;
+.login-form-container>h1 {
+  font-size: 53px;
+  color: #1F1C63;
 }
 
-p {
-  font-size: 16px;
-  color: #6b6b6b;
-  margin-bottom: 20px;
+.login-form-container>p {
+  font-size: 20px;
+  font-weight: 400;
+  margin: 0;
 }
 
 .login-form {
@@ -42,15 +41,26 @@ p {
   gap: 10px;
 }
 
+.Login-Form-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+  border-radius: 10px;
+  margin-top: 40px;
+  margin-bottom: 16px;
+  padding: 25px;
+  border: 1px solid green;
+}
+
 .input-group {
   display: flex;
   flex-direction: column;
 }
 
-.input {
+.Login-Form-section>.input-group>.input {
   padding: 10px;
-  border: 1px solid #2d922d;
-  border-radius: 5px;
+  border: 0;
+  border-bottom: 1px solid #c9c9c9;
   font-size: 16px;
   color: #333;
 }
@@ -62,29 +72,38 @@ p {
   margin-bottom: 20px;
 }
 
-.button-group {
-  display: flex;
+.login-form>.button-group {
   gap: 10px;
+  display: block;
 }
 
-.btn {
-  padding: 12px 20px;
+.login-form>.button-group>.login-btn {
+  width: 100%;
+  background: green;
+  height: 47px;
   border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  font-weight: bold;
-  border: 1px solid #2d922d;
+  font-size: 20px;
+  border: 2px solid green;
+  color: white;
+  font-weight: 600;
 }
 
-.login-btn {
-  background-color: #2d922d;
-  color: #ffffff;
+.login-form>.button-group>p {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.login-form>.button-group>p>.signup-btn {
+  width: auto;
+  height: auto;
+  background: none;
+  font-size: 17px;
+  color: #24a0ed;
+  padding: 0 5px;
   border: none;
-}
-
-.signup-btn {
-  background-color: #ffffff;
-  color: #2d922d;
+  font-weight: 400;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
 

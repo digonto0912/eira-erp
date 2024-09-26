@@ -1,63 +1,87 @@
 /* SelectionPage.css */
 .selection-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: linear-gradient(135deg, #d1ff76, #58ffb0, #f8ff5e); /* Background gradient */
-    background-size: cover;
-    position: relative;
-  }
-  
-  .back-arrow {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 24px;
-    cursor: pointer;
-    color: #333;
-  }
-  
-  .button-container {
-    display: flex;
-    gap: 20px;
-    background: rgba(255, 255, 255, 0.1); /* Transparent box */
-    padding: 20px 30px;
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(10px);
-  }
-  
-  .btn {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-  
-  .btn:hover {
-    transform: scale(1.05);
-  }
-  
-  .field-worker-btn {
-    background-color: #ffffff;
-    color: #333;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .office-admin-btn {
-    background-color: #007bff;
-    color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
-  }
-  
-  .client-btn {
-    background-color: #28a745;
-    color: #ffffff;
-    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-image: url("../../../public/Images/User-type/user-type-page-background-image.jpeg");
+  background-size: cover;
+  position: relative;
+}
+
+.back-arrow {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+}
+
+.button-container {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px 30px;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  height: 451px;
+  width: 996px;
+  position: relative;
+}
+
+.button-container>.headline {
+  font-size: 30px;
+  position: absolute;
+  color: white;
+  text-transform: uppercase
+}
+
+.button-container>.three-button {
+  display: flex;
+  gap: 20px;
+  height: 100%;
+}
+
+.three-button>div {
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  display: grid;
+}
+
+.btn {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  width: 277px;
+  height: 80px;
+  border-radius: 10px;
+  border: none;
+  font-size: 28px;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  transition-duration: 0.5s;
+}
+
+.field-worker-btn {
+  background-color: #ffffff;
+  color: #333;
+  box-shadow: 0 0 15px rgb(255 255 255 / 44%);
+}
+
+.office-admin-btn {
+  background-image: linear-gradient(45deg, #007bff, #1888ff);
+  color: #ffffff;
+  box-shadow: 0 0 15px rgb(0 123 255 / 70%);
+}
+
+.client-btn {
+  background-color: #28a745;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgb(40 167 69 / 30%);
+}

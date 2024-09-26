@@ -39,14 +39,6 @@ th {
   font-weight: bold;
 }
 
-input[type="checkbox"],
-input[type="number"],
-input[type="text"] {
-  width: 100%;
-  padding: 4px;
-  box-sizing: border-box;
-}
-
 .add-line-button {
   margin-bottom: 20px;
 }

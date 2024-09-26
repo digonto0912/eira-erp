@@ -16,15 +16,24 @@ const UserType = () => {
     <div className="selection-page">
       <div className="back-arrow" onClick={handleBack}>&#8592;</div>
       <div className="button-container">
-        <a href={`/${Input_Type}/Field`}>
-          <button className="btn field-worker-btn">Field Worker</button>
-        </a>
-        <a href={`/${Input_Type}/Office`}>
-          <button className="btn office-admin-btn">Office Admin</button>
-        </a>
-        <a href={`/${Input_Type}/Client`}>
-          <button className="btn client-btn">Client</button>
-        </a>
+        <div className='headline'>{Input_Type} TYPE</div>
+        <div className='three-button'>
+          <div>
+            <a href={`/${Input_Type}/Field`}>
+              <button className="btn field-worker-btn">Field Worker</button>
+            </a>
+          </div>
+          <div>
+            <a href={`/${Input_Type}/Office`}>
+              <button className="btn office-admin-btn">Office Admin</button>
+            </a>
+          </div>
+          <div>
+            <a href={`/${Input_Type}/Client`}>
+              <button className="btn client-btn">Client</button>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );

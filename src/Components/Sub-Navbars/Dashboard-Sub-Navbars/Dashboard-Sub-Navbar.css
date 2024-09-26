@@ -5,6 +5,7 @@
   padding: 7px 8px 6px 13px;
   height: 37px;
   gap: 10px;
+  position: relative;
 }
 
 .Dashboard-nav-item {

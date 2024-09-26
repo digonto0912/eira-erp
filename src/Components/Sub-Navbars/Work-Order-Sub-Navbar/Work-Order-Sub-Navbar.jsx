@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Work-Order-Sub-Navbar.css';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const WorkOrderSubNavbar = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [userType, setUserType] = useState('');
+
+  // Get userType from localStorage (or from your auth system)
+  useEffect(() => {
+    const storedUserType = localStorage.getItem('userType');
+    setUserType(storedUserType);
+  }, []);
 
   const handleButtonClick = (path) => {
     // Ensure you use the absolute path
     navigate(`${path}/${id}`);
+    location.reload()
   };
 
   return (
@@ -20,34 +28,39 @@ const WorkOrderSubNavbar = () => {
       >
         General Info
       </button>
-      
+
       <button
         onClick={() => handleButtonClick("/Job-Notes")}
         className="general-nav-item"
       >
         Job Notes
       </button>
-      
-      <button
-        onClick={() => handleButtonClick("/Bid-Completion-Notes")}
-        className="general-nav-item"
-      >
-        Bid / Completion Info
-      </button>
-      
+
+      {userType === 'Office' && (
+        <button
+          onClick={() => handleButtonClick("/Bid-Completion-Notes")}
+          className="general-nav-item"
+        >
+          Bid / Completion Info
+        </button>
+      )}
+
       <button
         onClick={() => handleButtonClick("/Photos-Documents")}
         className="general-nav-item"
       >
         Photos / Documents
       </button>
-      
-      <button
-        onClick={() => handleButtonClick("/Invoice")}
-        className="general-nav-item"
-      >
-        Invoice
-      </button>
+
+      {userType === 'Office' && (
+        <button
+          onClick={() => handleButtonClick("/Invoice")}
+          className="general-nav-item"
+        >
+          Invoice
+        </button>
+      )}
+
     </div>
   );
 };

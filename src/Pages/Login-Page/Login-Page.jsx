@@ -1,13 +1,13 @@
-// LoginPage.jsx
 import './Login-Page.css'; // Import the CSS file
 import React, { useState } from 'react';
-import img from "../../../public/Images/SignUp/building.webp";
+import img from "../../../public/Images/SignUp/eira-building.png";
 import { useNavigate, useParams } from 'react-router-dom';
 
 const LoginPage = () => {
   const params = useParams();
   const navigate = useNavigate();
 
+  // Get user type from the URL params
   const type = params.type;
 
   const [formData, setFormData] = useState({
@@ -45,9 +45,12 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Save the token or any relevant data here if needed
+        // Save the token and userType in local storage
+        localStorage.setItem('authToken', data.token);  // Store JWT token
+        localStorage.setItem('userType', type);  // Store user type from params
+
         alert('Login successful!');
-        navigate('/dashboard'); // Redirect to the dashboard page
+        navigate('/DashBoard'); // Redirect to the dashboard page
       } else {
         // Handle errors such as incorrect credentials
         setErrorMessage(data.message || 'Invalid email or password. Please try again.');
@@ -65,27 +68,31 @@ const LoginPage = () => {
         <h1>Welcome Sir</h1>
         <p>Please fill out crucial information fields.</p>
         <form className="login-form" onSubmit={handleSubmit}>
-          <div className="input-group">
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              className="input"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              className="input"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
+          <div className='Login-Form-section'>
+            <div className="input-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="someone@example.com"
+                className="input"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="input-group">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="********"
+                className="input"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <div className="remember-me">
@@ -94,7 +101,12 @@ const LoginPage = () => {
           </div>
           <div className="button-group">
             <button type="submit" className="btn login-btn">Log In</button>
-            <button type="button" className="btn signup-btn" onClick={() => navigate('/Signup-Type')}>Sign Up</button>
+            <p>
+              You do not have an account yet! please
+              <button type="button" className="btn signup-btn" onClick={() => navigate('/User-Type/Signup')}>
+                Sign Up
+              </button>
+            </p>
           </div>
         </form>
       </div>

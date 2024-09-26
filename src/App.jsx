@@ -1,4 +1,5 @@
 import './App.css'
+import PrivateRoute from './Pages/Hooks/PrivateRoute';
 import Navbar from "./Components/Navbar/Navbar";
 import DashboardSubNavbar from "./Components/Sub-Navbars/Dashboard-Sub-Navbars/Dashboard-Sub-Navbar";
 import Dashboard from "./Pages/Dashboard/Dashboard";
@@ -12,28 +13,32 @@ import JobNotes from './Pages/Job-Notes/Job-Notes';
 import BidCompletionNotes from './Pages/Bid-Completion-Notes/Bid-Completion-Notes';
 import PhotosDocuments from './Pages/Photos-Documents/Photos-Documents';
 import Invoice from './Pages/Invoice/Invoice';
-import FilterBox from "./Pages/temp page/FilterBox";
-import FilterBox2 from "./Pages/temp page/invoice";
 import MainButton from './Pages/Main-Button/Main-Button';
-import { 
+import {
   createBrowserRouter,
   RouterProvider
 } from 'react-router-dom';
 import UserType from './Pages/User-type/User-type';
 import SignUpPage from './Pages/Signup-Page/Signup-Page';
 import LoginPage from './Pages/Login-Page/Login-Page';
+import Unauthorized from './Pages/Unauthorized/Unauthorized';
 
 function App() {
 
   const router = createBrowserRouter([
     {
       // temp file
-      path: "/",
-      element: <><MainButton /></>
+      path: "/WorkOrder",
+      element: <>
+        <PrivateRoute allowedUserTypes={['Office', 'Field', 'Client']}>
+          <Navbar />
+        </PrivateRoute>
+      </>
     },
     {
-      path: "/DashBoard",
-      element: <><Navbar /> <DashboardSubNavbar /> <Dashboard /></>
+      // temp file
+      path: "/",
+      element: <><MainButton /></>
     },
     {
       path: "/User-Type/:Input_Type",
@@ -48,45 +53,93 @@ function App() {
       element: <><LoginPage /></>
     },
     {
-      // temp file
-      path: "/WorkOrder",
-      element: <><Navbar /> <FilterBox /> <FilterBox2 /> </>
+      path: "/DashBoard",
+      element: <>
+        <PrivateRoute allowedUserTypes={['Office', 'Field', 'Client']}>
+          <Navbar /> <DashboardSubNavbar /> <Dashboard />
+        </PrivateRoute>
+      </>
     },
     {
       path: "/Create-Work-Order",
-      element: <><Navbar /> <CreateWorkOrder /></>
+      element: <>
+        <PrivateRoute allowedUserTypes={['Office']}>
+          <Navbar /> <CreateWorkOrder />
+        </PrivateRoute>
+      </>
+
     },
     {
       path: "/Control-Panel",
-      element: <><Navbar /> <ControlPanel /></>
+      element: <>
+        <PrivateRoute allowedUserTypes={['Office']}>
+          <Navbar /> <ControlPanel />
+        </PrivateRoute>
+      </>
     },
     {
       path: "/Waiting-Payment",
-      element: <><Navbar /> <WaitingPayment /></>
+      element: <>
+        <PrivateRoute allowedUserTypes={['Office', 'Field', 'Client']}>
+          <Navbar /> <WaitingPayment />
+        </PrivateRoute>
+      </>
     },
     {
       path: "/Notification",
-      element: <><Navbar /> <Notification /></>
+      element: <>
+        <PrivateRoute allowedUserTypes={['Office', 'Field', 'Client']}>
+          <Navbar /> <Notification />
+        </PrivateRoute>
+      </>
     },
     {
       path: "/General/:id",
-      element: <><Navbar /> <SubNavbar /> <General /></>
+      element: <>
+        <PrivateRoute allowedUserTypes={['Office', 'Field', 'Client']}>
+          <Navbar /> <SubNavbar /> <General />
+        </PrivateRoute>
+      </>
     },
     {
       path: "/Job-Notes/:id",
-      element: <><Navbar /> <SubNavbar /> <JobNotes /></>
+      element: <>
+        <PrivateRoute allowedUserTypes={['Office', 'Field', 'Client']}>
+          <Navbar /> <SubNavbar /> <JobNotes />
+        </PrivateRoute>
+      </>
     },
     {
       path: "/Bid-Completion-Notes/:id",
-      element: <><Navbar /> <SubNavbar /> <BidCompletionNotes /></>
+      element: <>
+        <PrivateRoute allowedUserTypes={['Office']}>
+          <Navbar /> <SubNavbar /> <BidCompletionNotes />
+        </PrivateRoute>
+      </>
     },
     {
       path: "/Photos-Documents/:id",
-      element: <><Navbar /> <SubNavbar /> <PhotosDocuments /></>
+      element: <>
+        <PrivateRoute allowedUserTypes={['Office', 'Field', 'Client']}>
+          <Navbar /> <SubNavbar /> <PhotosDocuments />
+        </PrivateRoute>
+      </>
     },
     {
       path: "/Invoice/:id",
-      element: <><Navbar /> <SubNavbar /> <Invoice /></>
+      element: <>
+        <PrivateRoute allowedUserTypes={['Office']}>
+          <Navbar /> <SubNavbar /> <Invoice />
+        </PrivateRoute>
+      </>
+    },
+    {
+      path: "/Unauthorized",
+      element: <> <Unauthorized /> </>
+    },
+    {
+      path: "*",
+      element: <>404</>
     },
   ])
 

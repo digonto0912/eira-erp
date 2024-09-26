@@ -1,9 +1,28 @@
+
 .filter-box {
     padding: 20px;
     background-color: #f0f0f0;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-top: 20px;
+    position: absolute;
+    top: 41px;
+    z-index: 2;
+  }
+  
+  .filter-row-status {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .filter-row-status>label {
+    display: flex;
+    height: 1.3rem;
+  }
+  
+  .filter-row-status>label>input {
+    width: 15px;
   }
   
   .filter-row {
@@ -12,7 +31,7 @@
     margin-bottom: 10px;
   }
   
-  .filter-row input, 
+  .filter-row input,
   .filter-row select {
     padding: 5px;
     width: 150px;
@@ -36,4 +55,3 @@
   .toggle-button:hover {
     background-color: #0056b3;
   }
-  

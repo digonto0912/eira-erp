@@ -31,26 +31,6 @@ label {
   font-weight: bold;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="date"],
-textarea,
-select {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-textarea {
-  height: 80px;
-}
-
 table {
   width: 100%;
   border-collapse: collapse;

@@ -1,9 +1,15 @@
 import "./Navbar.css";
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import user_default from "../../../public/Images/Navbar/user-default.png";
 
 function Navbar() {
+  const [userType, setUserType] = useState('');
+
+  // Get userType from localStorage (or from your auth system)
+  useEffect(() => {
+    const storedUserType = localStorage.getItem('userType');
+    setUserType(storedUserType);
+  }, []);
 
   return (
     <nav className="navbar">
@@ -11,21 +17,28 @@ function Navbar() {
         <h1>EIRA™</h1>
         <ul className="nav-links">
 
-          <Link to="/Dashboard">
+          <a href="/Dashboard">
             <li className='active-nav-btn'>Dashboard</li>
-          </Link>
-          <Link to="/Create-Work-Order">
-            <li>New Work Order</li>
-          </Link>
-          <Link to="/Control-Panel">
-            <li>Control Panel</li>
-          </Link>
-          <Link to="/Waiting-Payment">
+          </a>
+
+          {userType === 'Office' && (
+            <a href="/Create-Work-Order">
+              <li>New Work Order</li>
+            </a>
+          )}
+
+          {userType === 'Office' && (
+            <a href="/Control-Panel">
+              <li>Control Panel</li>
+            </a>
+          )}
+
+          <a href="/Waiting-Payment">
             <li>Waiting Payment</li>
-          </Link>
-          <Link to="/Notification">
+          </a>
+          <a href="/Notification">
             <li>Notification</li>
-          </Link>
+          </a>
 
         </ul>
       </div>
