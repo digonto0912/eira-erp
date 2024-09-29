@@ -4,8 +4,10 @@ import './Control-Panel.css';
 const ControlPanel = () => {
   const [bidCompletionItems, setBidCompletionItems] = useState([]);
   const [photosAndDocsItems, setPhotosAndDocsItems] = useState([]);
+  const [photosAndDocsChildItems, setPhotosAndDocsChildItems] = useState([]);
   const [bidInput, setBidInput] = useState('');
   const [photoInput, setPhotoInput] = useState('');
+  const [photoChildInput, setPhotoChildInput] = useState('');
   const [editingItemId, setEditingItemId] = useState(null); // ID of the item being edited
   const [editingValue, setEditingValue] = useState(''); // The value being edited
 
@@ -58,11 +60,13 @@ const ControlPanel = () => {
   // Add photo item
   const addPhotoItem = async () => {
     if (photoInput.trim()) {
+      const newPhotoItem = { item: photoInput, child_item: [] }
+
       try {
         const response = await fetch('http://localhost:3001/api/photo-items', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ item: photoInput }),
+          body: JSON.stringify(newPhotoItem),
         });
         if (!response.ok) throw new Error('Failed to save photo item');
         location.reload();
@@ -73,10 +77,47 @@ const ControlPanel = () => {
     }
   };
 
+  // add photos or docs child item
+  const addPhotoChildItem = async (parentId, index) => {
+    if (photoChildInput.trim()) {
+      
+      if (index < 0 || index >= photosAndDocsItems.length) {
+        console.error(`Invalid index: ${index}`);
+        return;
+      }
+      
+      const old_childs = photosAndDocsItems[index]?.child_item;
+      let container = [];
+      
+      if(old_childs){
+        container = [
+          ...old_childs, photoChildInput
+        ]
+      } else{
+        container = [
+          photoChildInput
+        ]
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3001/api/photo-items/${parentId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ child_item: container }),
+        });
+        if (!response.ok) throw new Error('Failed to update photo child item');
+        location.reload();
+      } catch (error) {
+        console.error(error);
+      }
+      setPhotoChildInput('');
+    }
+  };
+
   // Delete item
   const deleteItem = async (collection, id) => {
     try {
-      const response = await fetch(`http://localhost:3001/delete/${collection}/${id}`, {
+      const response = await fetch(`http://localhost:3001/api/${collection}/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete item');
@@ -90,9 +131,7 @@ const ControlPanel = () => {
   // Edit item
   const editItem = async (collection, id, newValue) => {
     try {
-      console.log(id);
-      
-      const response = await fetch(`http://localhost:3001/${collection}/${id}`, {
+      const response = await fetch(`http://localhost:3001/api/${collection}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ item: newValue }),
@@ -140,7 +179,7 @@ const ControlPanel = () => {
                   <>
                     {item.item}
                     <button onClick={() => startEditing(item.id, item.item)}>Edit</button>
-                    <button onClick={() => {console.log(item.id); deleteItem('bid-items', item.id)}}>Delete</button>
+                    <button onClick={() => deleteItem('bid-items', item.id)}>Delete</button>
                   </>
                 )}
               </div>
@@ -184,6 +223,29 @@ const ControlPanel = () => {
                     <button onClick={() => deleteItem('photo-items', item.id)}>Delete</button>
                   </>
                 )}
+
+                <div className="child-items-container">
+                  <input
+                    type="text"
+                    value={photoChildInput}
+                    onChange={(e) => setPhotoChildInput(e.target.value)}
+                    placeholder="Add a child item"
+                  />
+                  <button onClick={() => addPhotoChildItem(item.id, index)}>Add Child Item</button>
+                </div>
+
+                <div className="child-items-list">
+                  {item.child_item.length > 0 && (
+                    <>
+                      <span>Child Item:</span>
+                      <ul>
+                        {item.child_item.map((child, index) => (
+                          <li key={index}>{child}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </div>
               </div>
             ))
           ) : (

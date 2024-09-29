@@ -35,6 +35,7 @@
   min-height: 200px;
   border: 1px solid #ddd;
   overflow-y: auto;
+  height: 100%;
 }
 
 .ColumnBoxUl>li {

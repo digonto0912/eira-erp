@@ -6,21 +6,37 @@ const CreateWorkOrder = () => {
   // Prepare the payload for a complete Future Work-Order
   const formData = useRef({});
   const [common_Bids_Items, setCommon_Bids_Items] = useState([]);
+  const [photosAndDocsItems, setPhotosAndDocsItems] = useState([]);
 
+  // Fetch existing data when component mounts
   useEffect(() => {
+    const fetch_Common_Bids_Items = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/bid-items');
+        if (!response.ok) throw new Error('Failed to fetch bid items');
+        const data = await response.json();
+        setCommon_Bids_Items(data || []);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchPhotoItems = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/photo-items');
+        if (!response.ok) throw new Error('Failed to fetch photo items');
+        const data = await response.json();
+        setPhotosAndDocsItems(data || []);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetch_Common_Bids_Items();
+    fetchPhotoItems();
+
   }, []);
 
-  const fetch_Common_Bids_Items = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/api/bid-items');
-      if (!response.ok) throw new Error('Failed to fetch bid items');
-      const data = await response.json();
-      setCommon_Bids_Items(data || []);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const complete_data_payload = {
     Work_Order_Creating_Date: new Date(),
@@ -105,7 +121,7 @@ const CreateWorkOrder = () => {
         return (
           {
             _id: Date.now() * Math.random(),
-            Common:1,
+            Common: 1,
             Status: 0,
             description: item.item,
             Qty: 0,
@@ -122,22 +138,16 @@ const CreateWorkOrder = () => {
       Comments: "",
       Headline: ""
     },
-    photos_page: {
-      conditional_photos: [
+    photos_page: photosAndDocsItems.map((item) => ({
+      rowName: item.item,
+      child_item: item.child_item.map((child) => (
         {
-          name: "Before",
-          photos: ["list of photos url"]
-        },
-        {
-          name: "During",
-          photos: ["list of photos url"]
-        },
-        {
-          name: "After",
-          photos: ["list of photos url"]
+          item_Name: child,
+          photos: []
         }
-      ]
-    },
+      ))
+    }
+    )),
     Invoice: {
       Contractor: {
         Rows: [
@@ -185,7 +195,9 @@ const CreateWorkOrder = () => {
   }
 
   // sending the payload to formData for sending to db
-  formData.current  = complete_data_payload
+  formData.current = complete_data_payload
+
+  console.log(formData.current);
 
   // others functions
   const handleChange = (e) => {

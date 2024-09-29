@@ -1,65 +1,145 @@
 .photos-documents-container {
-    width: 90%;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
-  }
-  
-  h1 {
-    text-align: left;
-    margin-bottom: 10px;
-  }
-  
-  .photo-count {
-    text-align: right;
-    margin-bottom: 20px;
-  }
-  
-  .tab-header {
-    background-color: black;
-    color: white;
-    padding: 10px;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .tabs {
-    display: flex;
-    justify-content: left;
-    margin-top: 10px;
-  }
-  
-  .tabs button {
-    background-color: transparent;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    color: black;
-  }
-  
-  .tabs button.active {
-    border-bottom: 2px solid black;
-    color: black;
-  }
-  
-  .photos-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 10px;
-    margin-top: 20px;
-  }
-  
-  .photos-gallery img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-  }
-  
-  .photos-gallery p {
-    grid-column: 1 / -1;
-    text-align: center;
-    font-size: 18px;
-    color: grey;
-  }
-  
+  width: 90%;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+h1 {
+  text-align: left;
+  margin-bottom: 15px;
+  font-size: 24px;
+  color: #333;
+}
+
+.photo-count {
+  text-align: right;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #555;
+}
+
+.tab-header {
+  background-color: #000;
+  color: #fff;
+  padding: 10px 15px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.tabs {
+  display: flex;
+  justify-content: left;
+  margin-top: 15px;
+}
+
+.tabs button {
+  background-color: transparent;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+  position: relative;
+}
+
+.tabs button.active {
+  color: #000;
+  border-bottom: 3px solid #000;
+}
+
+.tabs button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #000;
+}
+
+.photos-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.photos-gallery img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.photos-gallery p {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 18px;
+  color: #888;
+  margin-top: 15px;
+}
+
+.upload-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8faff;
+  border: 2px dashed #d3d3d3;
+  border-radius: 5px;
+  padding: 30px;
+  margin-top: 20px;
+}
+
+.drag-drop-box, 
+.upload-button {
+  width: 48%;
+  padding: 40px;
+  text-align: center;
+  background-color: #e6f0ff;
+  border: 1px solid #c5c5c5;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.drag-drop-box:hover, 
+.upload-button:hover {
+  border-color: #007bff;
+  background-color: #d6e6ff;
+}
+
+.section {
+  background-color: #000;
+  color: #fff;
+  margin-top: 30px;
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 18px;
+}
+
+.section p {
+  margin-top: 5px;
+  color: #ccc;
+  font-size: 16px;
+}
+
+.tracking-photos, 
+.bid-photos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tracking-photos h2, 
+.bid-photos h2 {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.tracking-photos p, 
+.bid-photos p {
+  font-size: 16px;
+  color: #aaa;
+}

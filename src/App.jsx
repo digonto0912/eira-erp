@@ -1,4 +1,8 @@
 import './App.css'
+import {
+  createBrowserRouter,
+  RouterProvider
+} from 'react-router-dom';
 import PrivateRoute from './Pages/Hooks/PrivateRoute';
 import Navbar from "./Components/Navbar/Navbar";
 import DashboardSubNavbar from "./Components/Sub-Navbars/Dashboard-Sub-Navbars/Dashboard-Sub-Navbar";
@@ -14,10 +18,6 @@ import BidCompletionNotes from './Pages/Bid-Completion-Notes/Bid-Completion-Note
 import PhotosDocuments from './Pages/Photos-Documents/Photos-Documents';
 import Invoice from './Pages/Invoice/Invoice';
 import MainButton from './Pages/Main-Button/Main-Button';
-import {
-  createBrowserRouter,
-  RouterProvider
-} from 'react-router-dom';
 import UserType from './Pages/User-type/User-type';
 import SignUpPage from './Pages/Signup-Page/Signup-Page';
 import LoginPage from './Pages/Login-Page/Login-Page';

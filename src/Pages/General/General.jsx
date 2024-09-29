@@ -1,6 +1,10 @@
+// General.jsx
 import './General.css';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import WorkOrderDetails from './Components/WorkOrderDetails';
+import WorkOrderItems from './Components/WorkOrderItems';
+import OfficeImageStatus from './Components/OfficeImageStatus'
 
 const General = () => {
   const params = useParams();
@@ -26,11 +30,15 @@ const General = () => {
     Source: '',
   });
   const [buttonsDisabled, setButtonsDisabled] = useState(false); // New state for disabling buttons
+  const [isClient, setIsClient] = useState(false);
+  const [isField, setIsField] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+
 
   useEffect(() => {
     fetchData();
   }, [params.id]);
-
   const fetchData = async () => {
     try {
       const response = await fetch(
@@ -43,22 +51,6 @@ const General = () => {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUpdatedDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
-  };
-
-  // Function to disable buttons for 3 seconds
-  const disableButtonsTemporarily = () => {
-    setButtonsDisabled(true);
-    setTimeout(() => {
-      setButtonsDisabled(false);
-    }, 1500);
   };
 
   // Save general info updates
@@ -93,6 +85,34 @@ const General = () => {
     }
   };
 
+
+  // Function to disable buttons for 3 seconds
+  const disableButtonsTemporarily = () => {
+    setButtonsDisabled(true);
+    setTimeout(() => {
+      setButtonsDisabled(false);
+    }, 1500);
+  };
+
+  // ... (Other functions for updating work order items remain the same)
+
+  // Get userType from localStorage (or from your auth system)
+  useEffect(() => {
+    const storedUserType = localStorage.getItem('userType');
+    setIsClient(storedUserType === 'Client');
+    setIsField(storedUserType === 'Field');
+    setIsAdmin(storedUserType === 'Admin');
+  }, [params]);
+
+  // handling input section sections
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
+
   // Work Order Item Functions
   const handleAddItem = async () => {
     disableButtonsTemporarily(); // Disable buttons for 3 seconds
@@ -109,12 +129,14 @@ const General = () => {
     await updateWorkOrderItemsInDatabase(updatedItems);
   };
 
+  // handle edited items in w.o. items 
   const handleEditItem = (index) => {
     disableButtonsTemporarily(); // Disable buttons for 3 seconds
     setEditingIndex(index);
     setEditingItem(workOrderItems[index]);
   };
 
+  // same the edited items in w.o. items 
   const handleSaveItem = async (index) => {
     disableButtonsTemporarily(); // Disable buttons for 3 seconds
     const updatedItems = [...workOrderItems];
@@ -132,6 +154,7 @@ const General = () => {
     await updateWorkOrderItemsInDatabase(updatedItems);
   };
 
+  // handel delete items in w.o. items
   const handleDeleteItem = async (index) => {
     disableButtonsTemporarily(); // Disable buttons for 3 seconds
     const updatedItems = workOrderItems.filter((_, i) => i !== index);
@@ -195,492 +218,30 @@ const General = () => {
       </div>
 
       <div className="work-order-body">
-
         <div className="work-order-top-part">
-          {/* Left Section for Work Order Details */}
-          <div className="work-order-details">
-            <div>
-              <button onClick={() => {
-                setIsEditing(!isEditing);
-                if (isEditing) {
-                  location.reload()
-                }
-              }}>
-                {isEditing ? 'Cancel' : 'Edit'}
-              </button>
-              {isEditing && (
-                <button onClick={handleSave}>
-                  Save
-                </button>
-              )}
-            </div>
+          <WorkOrderDetails
+            generalInfo={generalInfo}
+            isEditing={isEditing}
+            handleInputChange={handleInputChange}
+            handleSave={handleSave}
+            setIsEditing={setIsEditing}
 
-            <div>
-              <div className="general-form-group">
-                <label>work Order Number</label>
-                <input
-                  type="text"
-                  name="woNumber"
-                  value={generalInfo.woNumber}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-
-              <div className="general-form-group">
-                <label>Work Type</label>
-                <select
-                  value={generalInfo.workType}
-                  name='workType'
-                  disabled={!isEditing} // Disable select when not editing
-                  onChange={handleInputChange}
-                >
-                  <option value="Type1">Type 1</option>
-                  <option value="Type2">Type 2</option>
-                  <option value="Type3">Type 3</option>
-                </select>
-              </div>
-
-              <div className="general-form-group">
-                <label>Is Inspection?</label>
-                <input
-                  type="text"
-                  name="inspection"
-                  value={generalInfo?.inspection}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Customer</label>
-                <input
-                  type="text"
-                  name="customerNumber"
-                  value={generalInfo.customerNumber}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Address</label>
-                <input
-                  type="text"
-                  name="address"
-                  value={generalInfo.address}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Assigned Admin</label>
-                <input
-                  type="text"
-                  name="admin"
-                  value={generalInfo.admin}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Client Company</label>
-                <input
-                  type="text"
-                  name="company"
-                  value={generalInfo.company}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Import ID</label>
-                <input
-                  type="text"
-                  name="email"
-                  value={generalInfo.email}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>BATF</label>
-                <input
-                  type="text"
-                  name="batf"
-                  value={generalInfo.batf}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Contractor</label>
-                <input
-                  type="text"
-                  name="contractor"
-                  value={generalInfo.contractor != "" ? generalInfo.contractor : "Not Assigned"}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Rush?</label>
-                <input
-                  type="text"
-                  name="rush"
-                  value={generalInfo.rush ? "Yes" : "No"}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Lot Size</label>
-                <input
-                  type="text"
-                  name="lotSize"
-                  value={generalInfo.lotSize}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Lock Code</label>
-                <input
-                  type="text"
-                  name="lotCode"
-                  value={generalInfo.lotCode}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Key Code</label>
-                <input
-                  type="text"
-                  name="KeyCode"
-                  value={generalInfo.KeyCode}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-            </div>
-
-            {/* 2nd part */}
-            <div>
-              <div className="general-form-group">
-                <label>Start Date</label>
-                <input
-                  type="date"
-                  name="startDate"
-                  value={generalInfo.startDate}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Due Date</label>
-                <input
-                  type="date"
-                  name="dueDate"
-                  value={generalInfo.dueDate}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Invoice Date</label>
-                <input
-                  type="date"
-                  name="invoice_last_Complete_date"
-                  value={generalInfo?.invoice_last_Complete_date}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Complete Date</label>
-                <input
-                  type="date"
-                  name="W_O_Complete_Date"
-                  value={generalInfo?.W_O_Complete_Date}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Cancel Date</label>
-                <input
-                  type="date"
-                  name="W_O_Cancel_Date"
-                  value={generalInfo?.W_O_Cancel_Date}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-            </div>
-
-
-            {/* 3rd part */}
-            <div>
-              <div className="general-form-group">
-                <label>Broker Info</label>
-                <input
-                  type="text"
-                  name="W_O_Broker_Info"
-                  value={generalInfo?.W_O_Broker_Info}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Missing Info</label>
-                <input
-                  type="text"
-                  name="W_O_Missing_Info"
-                  value={generalInfo?.W_O_Missing_Info}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-              <div className="general-form-group">
-                <label>Comments</label>
-                <textarea
-                  name="comments"
-                  value={generalInfo.comments}
-                  onChange={handleInputChange}
-                  readOnly={!isEditing}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Right Section for Office and Image Status */}
-          <div className="general-page-right-half">
-            <div className="work-order-status">
-              <div>
-                <div className='status-check status-check-with-checkbox'>
-                  <h2>Ready for Office</h2>
-                  <input type="checkbox"/>
-                </div>
-                <div className="date-info">
-                  <p>08-17-2024 12:28 PM by Valerie Nelson</p>
-                </div>
-              </div>
-              <div>
-                <div className='status-check'>
-                  <h2>Estimated Complete Date :</h2>
-                </div>
-                <div className="date-info">
-                  <p>08-17-2024 12:28 PM by Valerie Nelson</p>
-                </div>
-              </div>
-              <div className='status-check status-check-with-checkbox'>
-                <label>Office Locked</label>
-                <input type="checkbox" />
-              </div>
-              <div className='status-check status-check-with-checkbox'>
-                <label>Freeze Property</label>
-                <input type="checkbox" />
-              </div>
-            </div>
-
-            {/* Image Section */}
-            <div className="image-section">
-              <h3>Front of House (Image)</h3>
-              <div className='imageBG'>
-                <img src="house-image-url.jpg" alt="Front of House" />
-              </div>
-            </div>
-
-            {/* Check-In Section */}
-            <div className="check-in-section">
-              <div>
-                <h4>Mobile Check-In</h4>
-                <p>User: V Nelson</p>
-                <p>Date: Aug 15, 4:04 PM</p>
-              </div>
-              <div>
-                <h4>Check In Sync</h4>
-                <p>Sent: Successful</p>
-              </div>
-            </div>
-          </div>
+          />
+          <OfficeImageStatus isClient={isClient} />
         </div>
-
-        {/* Work Order Item Details */}
-        <div className="work-order-items">
-          <h3>Work Order Item Details</h3>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Description</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Total</th>
-                <th>Additional Instructions</th>
-                <th>Source</th>
-                <th></th>
-                <th>+</th>
-              </tr>
-            </thead>
-            <tbody>
-              {workOrderItems?.map((item, index) => (
-                <tr key={index}>
-                  <td>
-                    {editingIndex === index ? (
-                      <input
-                        value={editingItem.Description}
-                        onChange={(e) =>
-                          handleEditingItemInputChange(e, 'Description')
-                        }
-                        disabled={buttonsDisabled} // Disable buttons
-                      />
-                    ) : (
-                      item.Description
-                    )}
-                  </td>
-                  <td>
-                    {editingIndex === index ? (
-                      <input
-                        value={editingItem.Qty}
-                        onChange={(e) =>
-                          handleEditingItemInputChange(e, 'Qty')
-                        }
-                        disabled={buttonsDisabled} // Disable buttons
-                      />
-                    ) : (
-                      item.Qty
-                    )}
-                  </td>
-                  <td>
-                    {editingIndex === index ? (
-                      <input
-                        value={editingItem.Price}
-                        onChange={(e) =>
-                          handleEditingItemInputChange(e, 'Price')
-                        }
-                        disabled={buttonsDisabled} // Disable buttons
-                      />
-                    ) : (
-                      item.Price
-                    )}
-                  </td>
-                  <td>
-                    {editingIndex === index ? (
-                      <input
-                        value={editingItem.Total}
-                        onChange={(e) =>
-                          handleEditingItemInputChange(e, 'Total')
-                        }
-                        disabled={buttonsDisabled} // Disable buttons
-                      />
-                    ) : (
-                      item.Total
-                    )}
-                  </td>
-                  <td>
-                    {editingIndex === index ? (
-                      <input
-                        value={editingItem.Additional_Instructions}
-                        onChange={(e) =>
-                          handleEditingItemInputChange(e, 'Additional_Instructions')
-                        }
-                        disabled={buttonsDisabled} // Disable buttons
-                      />
-                    ) : (
-                      item.Additional_Instructions
-                    )}
-                  </td>
-                  <td>
-                    {editingIndex === index ? (
-                      <input
-                        value={editingItem.Source}
-                        onChange={(e) =>
-                          handleEditingItemInputChange(e, 'Source')
-                        }
-                        disabled={buttonsDisabled} // Disable buttons
-                      />
-                    ) : (
-                      item.Source
-                    )}
-                  </td>
-                  <td>
-                    {editingIndex === index ? (
-                      <button onClick={() => handleSaveItem(index)} disabled={buttonsDisabled}>
-                        Save
-                      </button>
-                    ) : (
-                      <button onClick={() => handleEditItem(index)} disabled={buttonsDisabled}>
-                        Edit
-                      </button>
-                    )}
-                  </td>
-                  <td>
-                    <button onClick={() => handleDeleteItem(index)} disabled={buttonsDisabled}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              <tr>
-                <td>
-                  <input
-                    value={newItem.Description}
-                    onChange={(e) => handleNewItemInputChange(e, 'Description')}
-                    placeholder="New Description"
-                    disabled={buttonsDisabled}
-                  />
-                </td>
-                <td>
-                  <input
-                    value={newItem.Qty}
-                    onChange={(e) => handleNewItemInputChange(e, 'Qty')}
-                    placeholder="New Qty"
-                    disabled={buttonsDisabled}
-                  />
-                </td>
-                <td>
-                  <input
-                    value={newItem.Price}
-                    onChange={(e) => handleNewItemInputChange(e, 'Price')}
-                    placeholder="New Price"
-                    disabled={buttonsDisabled}
-                  />
-                </td>
-                <td>
-                  <input
-                    value={newItem.Total}
-                    onChange={(e) => handleNewItemInputChange(e, 'Total')}
-                    placeholder="New Total"
-                    disabled={buttonsDisabled}
-                  />
-                </td>
-                <td>
-                  <input
-                    value={newItem.Additional_Instructions}
-                    onChange={(e) =>
-                      handleNewItemInputChange(e, 'Additional_Instructions')
-                    }
-                    placeholder="New Instructions"
-                    disabled={buttonsDisabled}
-                  />
-                </td>
-                <td>
-                  <input
-                    value={newItem.Source}
-                    onChange={(e) => handleNewItemInputChange(e, 'Source')}
-                    placeholder="New Source"
-                    disabled={buttonsDisabled}
-                  />
-                </td>
-                <td colSpan="2">
-                  <button onClick={handleAddItem} disabled={buttonsDisabled}>
-                    Add
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <WorkOrderItems
+          workOrderItems={workOrderItems}
+          buttonsDisabled={buttonsDisabled}
+          handleEditItem={handleEditItem}
+          handleSaveItem={handleSaveItem}
+          handleDeleteItem={handleDeleteItem}
+          handleNewItemInputChange={handleNewItemInputChange}
+          handleEditingItemInputChange={handleEditingItemInputChange}
+          handleAddItem={handleAddItem}
+          newItem={newItem}
+          editingIndex={editingIndex}
+          editingItem= {editingItem}
+        />
       </div>
     </div>
   );
