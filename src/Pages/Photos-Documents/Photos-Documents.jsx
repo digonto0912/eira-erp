@@ -16,8 +16,9 @@ const PhotosDocuments = () => {
   useEffect(() => {
     console.log("workOrderDetails->", workOrderDetails);
     console.log("uploadedPhotos->", uploadedPhotos);
+    console.log("allRows->", allRows);
 
-  }, [workOrderDetails, uploadedPhotos]);
+  }, [workOrderDetails, uploadedPhotos, allRows]);
 
   useEffect(() => {
     fetchData();
@@ -30,7 +31,7 @@ const PhotosDocuments = () => {
       setWorkOrderDetails(data);
       setOriginalAllRows(data.photos_page);
       setAllRows(data.photos_page);
-  
+
       // Initialize default selected tab for each row
       const initialSelectedTabs = {};
       data.photos_page.forEach((row) => {
@@ -38,7 +39,7 @@ const PhotosDocuments = () => {
           initialSelectedTabs[row.rowName] = row.child_item[0].item_Name; // Set the first tab as active
         }
       });
-  
+
       setSelectedTabs(initialSelectedTabs); // Update the selectedTabs state with the initial values
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -128,25 +129,37 @@ const PhotosDocuments = () => {
   const handleFileSelect = (event, rowName, allActiveTab) => {
     const tab = allActiveTab[rowName]; // Get the selected tab for the specific row
     console.log("tab-> ", tab, rowName);
-
+  
     if (!rowName || !tab) {
       return;
     }
-
+  
     const files = Array.from(event.target.files);
     const updatedPhotos = files.map(file => ({
       imgUrl: URL.createObjectURL(file),
       altText: file.name,
       file: file // Keep original file for submission
     }));
-
-    setUploadedPhotos((prevState) => ({
-      ...prevState,
-      [rowName]: {
-        ...prevState[rowName],
-        [tab]: [...(prevState[rowName]?.[tab] || []), ...updatedPhotos]
-      }
-    }));
+  
+    setAllRows(prevState => 
+      prevState.map(row => {
+        if (row.rowName === rowName) {
+          return {
+            ...row,
+            child_item: row.child_item.map(child => {
+              if (child.item_Name === tab) {
+                return {
+                  ...child,
+                  photos: [...child.photos, ...updatedPhotos]
+                };
+              }
+              return child;
+            })
+          };
+        }
+        return row;
+      })
+    );
   };
 
   const handleDrop = (event, rowName) => {
@@ -177,43 +190,29 @@ const PhotosDocuments = () => {
   };
 
   const handleSubmit = async (rowName) => {
-
-    if (!uploadedPhotos[rowName]) {
-      return;
-    }
-
-    // Get all photos for the selected row
-    const photosToSubmit = [];
-
-    Object.keys(uploadedPhotos[rowName]).forEach((tab) => {
-      photosToSubmit.push(...uploadedPhotos[rowName][tab].map(photo => photo.file));
-    });
-
+    const row = allRows.find(row => row.rowName === rowName);
+    const tab = selectedTabs[rowName];
+    const photosToSubmit = row?.child_item?.find(child => child.item_Name === tab)?.photos || [];
+  
     if (photosToSubmit.length === 0) {
       alert("No images to submit.");
       return;
     }
-
+  
     const formData = new FormData();
     photosToSubmit.forEach(photo => {
-      formData.append('photos', photo); // Use 'photos' as the key for all files
+      formData.append('photos', photo.file); // Use 'photos' as the key for all files
     });
-
-    console.log(rowName)
-    formData.append('rowName', rowName); // Also append the selected tab value
-    formData.append('tab', selectedTabs[rowName]);  // Append the selected tab for this row
-
-    // Log formData content
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-
+  
+    formData.append('rowName', rowName);
+    formData.append('tab', tab);  // Append the selected tab for this row
+  
     try {
       const response = await fetch('http://localhost:3001/upload-docs', {
         method: 'POST',
         body: formData,
       });
-
+  
       if (response.ok) {
         alert('Images submitted successfully!');
       } else {
@@ -231,14 +230,26 @@ const PhotosDocuments = () => {
     if (!rowName || !tab) {
       return;
     }
-
-    setUploadedPhotos((prevState) => ({
-      ...prevState,
-      [rowName]: {
-        ...prevState[rowName],
-        [tab]: prevState[rowName][tab].filter((_, i) => i !== index),
-      }
-    }));
+  
+    setAllRows(prevState =>
+      prevState.map(row => {
+        if (row.rowName === rowName) {
+          return {
+            ...row,
+            child_item: row.child_item.map(child => {
+              if (child.item_Name === tab) {
+                return {
+                  ...child,
+                  photos: child.photos.filter((_, i) => i !== index)
+                };
+              }
+              return child;
+            })
+          };
+        }
+        return row;
+      })
+    );
   };
 
   return (
@@ -289,7 +300,7 @@ const PhotosDocuments = () => {
               </div>
 
               {/* Upload and Drag-and-Drop area */}
-              <div className="upload-area" key={index} onDrop={(e) => handleDrop(e, rowName)} onDragOver={handleDragOver}>
+              <div className="upload-area" onDrop={(e) => handleDrop(e, rowName)} onDragOver={handleDragOver}>
                 <div className="drag-drop-box">Drag And Drop</div>
                 <div className="upload-button" onClick={() => document.getElementById(`fileInput_${index}`).click()}>
                   Upload Photos
