@@ -81,38 +81,6 @@ const PhotosDocuments = () => {
     }
   };
 
-  const fetchImages = async (rowName) => {
-    if (!rowName) {
-      return;
-    }
-
-    const tabs = imgMetaData?.all_rows_infos[rowName];
-
-    if (!tabs) {
-      return;
-    }
-
-    Object.keys(tabs).forEach(async (tab) => {
-      try {
-        if (!uploadedPhotos[rowName]) {
-          uploadedPhotos[rowName] = {};
-        }
-
-        // all photo getting for filling arrays
-        const response = await fetch(`http://localhost:3002/fetch-docs/${rowName}/${tab}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch images');
-        }
-
-        const data = await response.json();
-
-        uploadedPhotos[rowName][tab] = data; // Update the state with the fetched images
-      } catch (error) {
-        console.error('Error fetching images:', error);
-      }
-    });
-  };
-
   useEffect(() => {
     // Fetch images when the component loads
     fetchItemRows();
@@ -176,13 +144,25 @@ const PhotosDocuments = () => {
       file: file // Keep original file for submission
     }));
 
-    setUploadedPhotos((prevState) => ({
-      ...prevState,
-      [rowName]: {
-        ...prevState[rowName],
-        [tab]: [...(prevState[rowName]?.[tab] || []), ...updatedPhotos]
-      }
-    }));
+    setAllRows(prevState => 
+      prevState.map(row => {
+        if (row.rowName === rowName) {
+          return {
+            ...row,
+            child_item: row.child_item.map(child => {
+              if (child.item_Name === tab) {
+                return {
+                  ...child,
+                  photos: [...child.photos, ...updatedPhotos]
+                };
+              }
+              return child;
+            })
+          };
+        }
+        return row;
+      })
+    );
   };
 
   const handleDragOver = (event) => {
@@ -208,7 +188,7 @@ const PhotosDocuments = () => {
     formData.append('tab', tab);  // Append the selected tab for this row
   
     try {
-      const response = await fetch('http://localhost:3001/upload-docs', {
+      const response = await fetch(`http://localhost:3001/upload-docs/${params.id}`, {
         method: 'POST',
         body: formData,
       });
@@ -255,58 +235,75 @@ const PhotosDocuments = () => {
   return (
     <div className="photos-documents-container">
       <h1>Photos / Documents</h1>
+  
+      {/* Display total photo count from imgMetaData */}
       <div className="photo-count">
-        Photos: {imgMetaData?.total_photos}
+        Photos: {imgMetaData?.total_photos || 0}
       </div>
-
-      {
-        allRows &&
-        allRows.map((singleRow, index) => {
+  
+      {/* Iterate over all rows */}
+      {allRows &&
+        allRows.map((singleRow, rowIndex) => {
           const rowName = singleRow.rowName;
-
+  
           return (
-            <div key={index}>
+            <div key={rowIndex} className="row-section">
+              {/* Display row name */}
               <div className="tab-header">
                 <h2>{rowName}</h2>
               </div>
-
+  
+              {/* Display tabs for each row's child items */}
               <div className="tabs">
-                {singleRow?.child_item && (singleRow?.child_item?.length > 0) &&
-                  singleRow?.child_item.map((tab, index) => {
-                    return (
-                      <div key={index}>
-                        <button
-                          className={selectedTabs[rowName] === tab.item_Name ? 'active' : ''}
-                          onClick={() => handleTabClick(rowName, tab.item_Name)}
-                        >
-                          {tab.item_Name} ({tab.photos.length})
-                        </button>
-                      </div>
-                    );
-                  })
-                }
-              </div>
-
-              {/* Image Gallery for each tab */}
-              <div className="photos-gallery">
-                {uploadedPhotos[rowName]?.[selectedTabs[rowName]]?.length > 0 &&
-                  uploadedPhotos[rowName][selectedTabs[rowName]].map((photo, index) => (
-                    <div key={index} className="image-wrapper">
-                      <img src={photo.imgUrl} alt={photo.altText || `Image ${index}`} />
-                      <button className="remove-button" onClick={() => handleRemoveImage(rowName, index)}>X</button>
+                {singleRow?.child_item && singleRow.child_item.length > 0 && 
+                  singleRow.child_item.map((tab, tabIndex) => (
+                    <div key={tabIndex}>
+                      <button
+                        className={selectedTabs[rowName] === tab.item_Name ? 'active' : ''}
+                        onClick={() => handleTabClick(rowName, tab.item_Name)}
+                      >
+                        {tab.item_Name} ({tab.photos?.length || 0})
+                      </button>
                     </div>
                   ))
                 }
               </div>
-
+  
+              {/* Image Gallery for selected tab */}
+              <div>
+                {singleRow.child_item &&
+                  singleRow.child_item
+                    .filter((child) => child.item_Name === selectedTabs[rowName]) // Filter by selected tab
+                    .map((child) => (
+                      <div key={child.item_Name} className='photos-gallery'>
+                        {child.photos && child.photos.length > 0 ? (
+                          child.photos.map((photo, photoIndex) => (
+                            <div key={photoIndex} className="image-wrapper">
+                              <img src={photo.imgUrl || photo.url} alt={photo.altText || `Image ${photoIndex}`} />
+                              <button className="remove-button" onClick={() => handleRemoveImage(rowName, photoIndex)}>
+                                X
+                              </button>
+                            </div>
+                          ))
+                        ) : (
+                          <p>No photos uploaded for this tab.</p>
+                        )}
+                      </div>
+                    ))}
+              </div>
+  
               {/* Upload and Drag-and-Drop area */}
-              <div className="upload-area" onDrop={(e) => handleDrop(e, rowName)} onDragOver={handleDragOver}>
+              <div
+                className="upload-area"
+                onDrop={(e) => handleDrop(e, rowName)}
+                onDragOver={handleDragOver}
+              >
                 <div className="drag-drop-box">Drag And Drop</div>
-                <div className="upload-button" onClick={() => document.getElementById(`fileInput_${index}`).click()}>
+                <div className="upload-button" onClick={() => document.getElementById(`fileInput_${rowIndex}`).click()}>
                   Upload Photos
                 </div>
                 <input
-                  id={`fileInput_${index}`}
+                  id={`fileInput_${rowIndex}`}
                   type="file"
                   multiple
                   name="photos"
@@ -314,30 +311,21 @@ const PhotosDocuments = () => {
                   onChange={(e) => handleFileSelect(e, rowName, selectedTabs)}
                 />
               </div>
-
-              {/* Submit button visible if any photos are uploaded */}
-              {uploadedPhotos[rowName] && uploadedPhotos[rowName][selectedTabs[rowName]]?.length > 0 && (
+  
+              {/* Submit button for each row's selected tab */}
+              {singleRow.child_item.some(
+                (child) => child.item_Name === selectedTabs[rowName] && child.photos?.length > 0
+              ) && (
                 <button className="submit-button" onClick={() => handleSubmit(rowName)}>
-                  Submit {uploadedPhotos[rowName][selectedTabs[rowName]].length} Photos
+                  Submit Photos
                 </button>
               )}
             </div>
-          )
-        })
-      }
-
-      {/* Additional sections for Tracking Photos and Bid photos */}
-      <div className="section tracking-photos">
-        <h2>Tracking Photos</h2>
-        <p>Total (0)</p>
-      </div>
-
-      <div className="section bid-photos">
-        <h2>Bid photos</h2>
-        <p>Total Category (0)</p>
-      </div>
+          );
+        })}
     </div>
   );
+  
 };
 
 export default PhotosDocuments;

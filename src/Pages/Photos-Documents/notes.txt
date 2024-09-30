@@ -1,9 +1,0 @@
-{
-  "before": [
-    { "imgUrl": "http://localhost:3001/uploads/before1.jpg", "altText": "Before Image 1" },
-    { "imgUrl": "http://localhost:3001/uploads/before2.jpg", "altText": "Before Image 2" }
-  ],
-  "during": [],
-  "after": []
-}
-json format

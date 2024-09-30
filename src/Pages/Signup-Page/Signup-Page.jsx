@@ -118,7 +118,7 @@ const SignUpPage = () => {
 
   const completeSignUp = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/users/${type.toLowerCase()}`, {
+      const response = await fetch(`http://localhost:3001/SignUp/users/${type.toLowerCase()}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

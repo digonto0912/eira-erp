@@ -5,6 +5,11 @@
   font-size: 50px;
 }
 
+.payment-invoice-container{
+  display: flex;
+  gap: 40px;
+}
+
 .payment-invoice-container > div{
   background: #f6f6f6a3;
   padding: 30px;
