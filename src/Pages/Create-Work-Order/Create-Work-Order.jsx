@@ -150,46 +150,36 @@ const CreateWorkOrder = () => {
     )),
     Invoice: {
       Contractor: {
-        Rows: [
-          {
-            Item_Description: "",
-            Qty: "",
-            Price: "",
-            Total: "",
-            Adj_Price: "",
-            After_Adj_Price_Total: "",
-            Comment: ""
-          }
-        ],
-        Sub_Total: "",
-        Discount: "",
-        Total: "",
-        comment: "",
-        invoice_date: "",
-        reference: ""
+        Head_comment: "",
+          Reference_ID: "",
+          send_to_client: false,
+          send_to_contractor: true,
+          workOrderId: null,
+          Discount: 0,
+          invoiceItems: [], // list of items
+          Sub_Total: 0,
+          Total: 0,
+          invoice_date: null
+      },
+      Client: {
+        client_Head_Comment: "",
+        invoice_Complete: false,
+        credit_Memo: false,
+        send_to_client: true,
+        send_to_contractor: false,
+        workOrderId: null,
+        Discount: 0,
+        invoiceItems: [],
+        Sub_Total: 0,
+        Total: 0,
+        invoice_date: null,
       },
       Save_Payment: {
         Payment_Date: "",
         Amount: "",
-        Check: "",
+        Check_Number: "",
         Comment: "",
-        Charge_back: false
-      },
-      Client: {
-        Rows: [
-          {
-            Item_Description: "",
-            Qty: "",
-            Price: "",
-            Total: ""
-          }
-        ],
-        Sub_Total: "",
-        Discount: "",
-        Total: "",
-        comment: "",
-        invoice_Complete: "",
-        Credit_Memo: ""
+        Charge_Back: false
       }
     }
   }

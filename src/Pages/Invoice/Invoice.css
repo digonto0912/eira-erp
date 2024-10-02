@@ -8,6 +8,11 @@
 .payment-invoice-container{
   display: flex;
   gap: 40px;
+  width: 100%;
+}
+
+.payment-invoice-container > div{
+  width: 50%;
 }
 
 .payment-invoice-container > div{
@@ -33,9 +38,12 @@ h1 {
 .invoice-type {
   background-color: black;
   color: white;
-  padding: 10px;
+  padding: 5px;
   font-size: 18px;
   font-weight: bold;
+  text-align: center;
+  display: grid;
+  align-items: center;
 }
 
 .invoice-table {
@@ -74,6 +82,14 @@ h1 {
   justify-content: space-between;
 }
 
+.send-Invoice-Button {
+  margin-top: 30px;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #ddd;
+  border: none;
+}
+
 .invoice-footer {
   justify-content: space-between;
   margin-top: 20px;
@@ -109,4 +125,113 @@ h1 {
 
 .action-buttons button:hover {
   background-color: #ccc;
+}
+
+/* payment done note saving css endpoint */
+.payment-section {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 50px auto;
+  font-family: 'Arial', sans-serif;
+}
+
+.payment-section > h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.payment-section > p {
+  text-align: center;
+  color: #7a7a7a;
+}
+
+.payment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group > label {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.input-group > input[type="text"] {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
+}
+
+.input-group > input[type="date"] {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
+}
+
+.input-group > input[type="text"]:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-group > label {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.save-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.save-btn:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 600px) {
+  .payment-section {
+    padding: 15px;
+  }
+
+  .payment-section h3 {
+    font-size: 1.3rem;
+  }
+
+  .input-group input[type="text"] {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .save-btn {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
 }
