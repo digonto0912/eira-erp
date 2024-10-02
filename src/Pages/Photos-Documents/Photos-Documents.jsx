@@ -8,10 +8,14 @@ const PhotosDocuments = () => {
   const [originalAllRows, setOriginalAllRows] = useState([]);
   const [allRows, setAllRows] = useState([]);
   const [uploadedPhotos, setUploadedPhotos] = useState({});
-  const [imgMetaData, setImgMetaData] = useState(null);
   const [selectedTabs, setSelectedTabs] = useState({});
+  // State to track the currently visible row
+  const [visibleRowIndex, setVisibleRowIndex] = useState(null);
+  const [modalImage, setModalImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  //// new part start
+
 
   useEffect(() => {
     console.log("workOrderDetails->", workOrderDetails);
@@ -46,8 +50,6 @@ const PhotosDocuments = () => {
     }
   };
 
-  //// new part end
-
   const fetchItemRows = async () => {
     try {
       const response = await fetch('http://localhost:3001/api/photo-items');
@@ -63,28 +65,9 @@ const PhotosDocuments = () => {
     }
   };
 
-  const fetchImageMetaData = async () => {
-    try {
-      // geting Meta Data Of All Images
-      const responseMetaData = await fetch('http://localhost:3001/api/photos/Photos_Meta_Data');
-
-      if (!responseMetaData) {
-        throw new Error('Failed to fetch images meta data');
-      }
-
-      const imgMetaData = await responseMetaData.json();
-      console.log(imgMetaData);
-
-      setImgMetaData(imgMetaData);
-    } catch (error) {
-      console.error('Error fetching images:', error);
-    }
-  };
-
   useEffect(() => {
     // Fetch images when the component loads
     fetchItemRows();
-    fetchImageMetaData();
   }, []);
 
   const handleTabClick = (rowName, tab) => {
@@ -97,19 +80,19 @@ const PhotosDocuments = () => {
   const handleFileSelect = (event, rowName, allActiveTab) => {
     const tab = allActiveTab[rowName]; // Get the selected tab for the specific row
     console.log("tab-> ", tab, rowName);
-  
+
     if (!rowName || !tab) {
       return;
     }
-  
+
     const files = Array.from(event.target.files);
     const updatedPhotos = files.map(file => ({
       imgUrl: URL.createObjectURL(file),
       altText: file.name,
       file: file // Keep original file for submission
     }));
-  
-    setAllRows(prevState => 
+
+    setAllRows(prevState =>
       prevState.map(row => {
         if (row.rowName === rowName) {
           return {
@@ -144,7 +127,7 @@ const PhotosDocuments = () => {
       file: file // Keep original file for submission
     }));
 
-    setAllRows(prevState => 
+    setAllRows(prevState =>
       prevState.map(row => {
         if (row.rowName === rowName) {
           return {
@@ -173,26 +156,28 @@ const PhotosDocuments = () => {
     const row = allRows.find(row => row.rowName === rowName);
     const tab = selectedTabs[rowName];
     const photosToSubmit = row?.child_item?.find(child => child.item_Name === tab)?.photos || [];
-  
+
     if (photosToSubmit.length === 0) {
       alert("No images to submit.");
       return;
     }
-  
+
+    setIsSubmitting(true); // Set submitting state to true
+
     const formData = new FormData();
     photosToSubmit.forEach(photo => {
       formData.append('photos', photo.file); // Use 'photos' as the key for all files
     });
-  
+
     formData.append('rowName', rowName);
     formData.append('tab', tab);  // Append the selected tab for this row
-  
+
     try {
       const response = await fetch(`http://localhost:3001/upload-docs/${params.id}`, {
         method: 'POST',
         body: formData,
       });
-  
+
       if (response.ok) {
         alert('Images submitted successfully!');
       } else {
@@ -201,6 +186,8 @@ const PhotosDocuments = () => {
     } catch (error) {
       console.error('Error submitting images:', error);
       alert('Error submitting images.');
+    } finally {
+      setIsSubmitting(false); // Reset submitting state to false after submission
     }
   };
 
@@ -210,7 +197,7 @@ const PhotosDocuments = () => {
     if (!rowName || !tab) {
       return;
     }
-  
+
     setAllRows(prevState =>
       prevState.map(row => {
         if (row.rowName === rowName) {
@@ -232,100 +219,151 @@ const PhotosDocuments = () => {
     );
   };
 
+  // Function to handle row toggle
+  const handleRowClick = (index) => {
+    // Toggle visibility: if the same row is clicked again, hide it
+    if (visibleRowIndex === index) {
+      setVisibleRowIndex(null); // Hide the row
+    } else {
+      setVisibleRowIndex(index); // Show the row
+    }
+  };
+
+  const handleImageClick = (photo) => {
+    setModalImage(photo.imgUrl || photo.url);
+    setIsModalOpen(true);
+  };
+
+  // Function to calculate total number of photos
+  const getTotalPhotosCount = () => {
+    if (!allRows || allRows.length === 0) return 0;
+
+    return allRows.reduce((total, row) => {
+      const rowPhotoCount = row.child_item.reduce((rowTotal, child) => {
+        return rowTotal + (child.photos ? child.photos.length : 0);
+      }, 0);
+      return total + rowPhotoCount;
+    }, 0);
+  };
+
+
   return (
     <div className="photos-documents-container">
       <h1>Photos / Documents</h1>
-  
-      {/* Display total photo count from imgMetaData */}
+
+      {/* Display total photo count */}
       <div className="photo-count">
-        Photos: {imgMetaData?.total_photos || 0}
+        Photos: {getTotalPhotosCount() || 0} {/* Total photo count */}
       </div>
-  
+
       {/* Iterate over all rows */}
       {allRows &&
         allRows.map((singleRow, rowIndex) => {
           const rowName = singleRow.rowName;
-  
+          const isRowVisible = visibleRowIndex === rowIndex; // Check if this row is visible
+
           return (
             <div key={rowIndex} className="row-section">
-              {/* Display row name */}
-              <div className="tab-header">
+              {/* Display row name with click to toggle visibility */}
+              <div className="tab-header" onClick={() => handleRowClick(rowIndex)}>
                 <h2>{rowName}</h2>
               </div>
-  
-              {/* Display tabs for each row's child items */}
-              <div className="tabs">
-                {singleRow?.child_item && singleRow.child_item.length > 0 && 
-                  singleRow.child_item.map((tab, tabIndex) => (
-                    <div key={tabIndex}>
-                      <button
-                        className={selectedTabs[rowName] === tab.item_Name ? 'active' : ''}
-                        onClick={() => handleTabClick(rowName, tab.item_Name)}
-                      >
-                        {tab.item_Name} ({tab.photos?.length || 0})
-                      </button>
+
+              {/* Conditionally render "tab section under row" based on visibility */}
+              {isRowVisible && (
+                <div className='tab-section-under-row'>
+                  {/* Display tabs for each row's child items */}
+                  <div className="tabs">
+                    {singleRow?.child_item && singleRow.child_item.length > 0 &&
+                      singleRow.child_item.map((tab, tabIndex) => (
+                        <div key={tabIndex}>
+                          <button
+                            className={selectedTabs[rowName] === tab.item_Name ? 'active' : ''}
+                            onClick={() => handleTabClick(rowName, tab.item_Name)}
+                          >
+                            {tab.item_Name} ({tab.photos?.length || 0})
+                          </button>
+                        </div>
+                      ))
+                    }
+                  </div>
+
+                  {/* Image Gallery for selected tab */}
+                  <div className='Img-Gallery'>
+                    {singleRow.child_item &&
+                      singleRow.child_item
+                        .filter((child) => child.item_Name === selectedTabs[rowName]) // Filter by selected tab
+                        .map((child) => (
+                          <div key={child.item_Name} className='photos-gallery'>
+                            {child.photos && child.photos.length > 0 ? (
+                              child.photos.map((photo, photoIndex) => (
+                                <div key={photoIndex} className="image-wrapper">
+                                  <img
+                                    src={photo.imgUrl || photo.url}
+                                    alt={photo.altText || `Image ${photoIndex}`}
+                                    onClick={() => handleImageClick(photo)}
+                                  />
+                                  <button className="remove-button" onClick={() => handleRemoveImage(rowName, photoIndex)}>
+                                    X
+                                  </button>
+                                </div>
+                              ))
+                            ) : (
+                              <p>No photos uploaded for this tab.</p>
+                            )}
+                          </div>
+                        ))}
+                  </div>
+
+                  {/* Submit button for each row's selected tab */}
+                  <div>
+                    {singleRow.child_item.some(
+                      (child) => child.item_Name === selectedTabs[rowName] && child.photos?.length > 0
+                    ) && (
+                        <button
+                          className="submit-button"
+                          onClick={() => handleSubmit(rowName)}
+                          disabled={isSubmitting} // Disable the button when submitting
+                        >
+                          {isSubmitting ? "Submitting..." : "Submit Photos"} {/* Show text based on submitting state */}
+                        </button>
+                      )}
+                  </div>
+
+                  {/* Upload and Drag-and-Drop area */}
+                  <div
+                    className="upload-area"
+                    onDrop={(e) => handleDrop(e, rowName)}
+                    onDragOver={handleDragOver}
+                  >
+                    <div className="drag-drop-box">Drag And Drop</div>
+                    <div className="upload-button" onClick={() => document.getElementById(`fileInput_${rowIndex}`).click()}>
+                      Upload Photos
                     </div>
-                  ))
-                }
-              </div>
-  
-              {/* Image Gallery for selected tab */}
-              <div>
-                {singleRow.child_item &&
-                  singleRow.child_item
-                    .filter((child) => child.item_Name === selectedTabs[rowName]) // Filter by selected tab
-                    .map((child) => (
-                      <div key={child.item_Name} className='photos-gallery'>
-                        {child.photos && child.photos.length > 0 ? (
-                          child.photos.map((photo, photoIndex) => (
-                            <div key={photoIndex} className="image-wrapper">
-                              <img src={photo.imgUrl || photo.url} alt={photo.altText || `Image ${photoIndex}`} />
-                              <button className="remove-button" onClick={() => handleRemoveImage(rowName, photoIndex)}>
-                                X
-                              </button>
-                            </div>
-                          ))
-                        ) : (
-                          <p>No photos uploaded for this tab.</p>
-                        )}
-                      </div>
-                    ))}
-              </div>
-  
-              {/* Upload and Drag-and-Drop area */}
-              <div
-                className="upload-area"
-                onDrop={(e) => handleDrop(e, rowName)}
-                onDragOver={handleDragOver}
-              >
-                <div className="drag-drop-box">Drag And Drop</div>
-                <div className="upload-button" onClick={() => document.getElementById(`fileInput_${rowIndex}`).click()}>
-                  Upload Photos
+                    <input
+                      id={`fileInput_${rowIndex}`}
+                      type="file"
+                      multiple
+                      name="photos"
+                      style={{ display: 'none' }}
+                      onChange={(e) => handleFileSelect(e, rowName, selectedTabs)}
+                      disabled={isSubmitting} // Disable file input when submitting
+                    />
+                  </div>
                 </div>
-                <input
-                  id={`fileInput_${rowIndex}`}
-                  type="file"
-                  multiple
-                  name="photos"
-                  style={{ display: 'none' }}
-                  onChange={(e) => handleFileSelect(e, rowName, selectedTabs)}
-                />
-              </div>
-  
-              {/* Submit button for each row's selected tab */}
-              {singleRow.child_item.some(
-                (child) => child.item_Name === selectedTabs[rowName] && child.photos?.length > 0
-              ) && (
-                <button className="submit-button" onClick={() => handleSubmit(rowName)}>
-                  Submit Photos
-                </button>
               )}
             </div>
           );
         })}
+      {isModalOpen && (
+        <div className="modal" onClick={() => setIsModalOpen(false)}>
+          <span className="close">&times;</span>
+          <img className="modal-content" src={modalImage} alt="Modal View" />
+        </div>
+      )}
     </div>
   );
-  
+
 };
 
 export default PhotosDocuments;
