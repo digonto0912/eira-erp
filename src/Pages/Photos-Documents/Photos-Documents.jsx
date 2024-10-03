@@ -264,7 +264,7 @@ const PhotosDocuments = () => {
     <div className="photos-documents-container">
       <h1>Photos / Documents</h1>
 
-      <div>
+      <div className='edite-total-image-btn'>
         <div>
           {userType != 'Client' && (
             <button onClick={() => setIsEditing((prev) => !prev)}>
@@ -343,22 +343,41 @@ const PhotosDocuments = () => {
 
                   {/* Submit button for each row's selected tab */}
                   {isEditing && (
-                    <div>
+                    <div className="delete-btn">
                       {singleRow.child_item.some(
-                        (child) => child.item_Name === selectedTabs[rowName] && (child.photos?.length > 0 || (canceledImages.filter(img => img.rowName === rowName && img.tab === selectedTabs[rowName]).length > 0))
+                        (child) =>
+                          child.item_Name === selectedTabs[rowName] &&
+                          (child.photos?.length > 0 ||
+                            canceledImages.filter(
+                              (img) => img.rowName === rowName && img.tab === selectedTabs[rowName]
+                            ).length > 0)
                       ) && (
                           <button
-                            className="submit-button"
+                            className={`submit-button ${canceledImages.filter(
+                              (img) => img.rowName === rowName && img.tab === selectedTabs[rowName]
+                            ).length > 0
+                                ? "delete-button-class"  // CSS class for "Yes, delete it"
+                                : "submit-button-class"   // CSS class for "Submit Photos"
+                              }`}
                             onClick={() => handleSubmit(rowName)}
                             disabled={isSubmitting} // Disable the button when submitting
                           >
-                            {(canceledImages.filter(img => img.rowName === rowName && img.tab === selectedTabs[rowName]).length > 0)
+                            {canceledImages.filter(
+                              (img) => img.rowName === rowName && img.tab === selectedTabs[rowName]
+                            ).length > 0
                               ? "Yes, delete it"
-                              : (isSubmitting ? "Submitting..." : "Submit Photos")}
+                              : isSubmitting
+                                ? "Submitting..."
+                                : "Submit Photos"}
                           </button>
                         )}
-                      {(canceledImages.filter(img => img.rowName === rowName && img.tab === selectedTabs[rowName]).length > 0)
-                        && <button onClick={() => (location.reload())}> No, Keep it </button>}
+                      {canceledImages.filter(
+                        (img) => img.rowName === rowName && img.tab === selectedTabs[rowName]
+                      ).length > 0 && (
+                          <button className="keepIt-btn" onClick={() => location.reload()}>
+                            No, Keep it
+                          </button>
+                        )}
                     </div>
                   )}
 
