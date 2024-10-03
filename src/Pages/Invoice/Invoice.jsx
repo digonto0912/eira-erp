@@ -22,30 +22,25 @@ const Invoice = () => {
   const [creditMemo, setCreditMemo] = useState(false);
   const [invoice_date, setInvoice_date] = useState("");
   const [clientInvoice_date, setClientInvoice_date] = useState("");
-  const [savePayment, setSavePayment] = useState({});
+  const savePayment = useRef({});
   const [sending_Invoive, set_Sending_Invoive] = useState(false);
   const [sending_Client_Invoive, set_Sending_Client_Invoive] = useState(false);
+  const count = useRef(0);
 
+
+  console.log("mount", count.current)
+  count.current = count.current+1
 
   useEffect(() => {
     fetchData();
-    console.log(mainComment);
-
-  }, [params.id, mainComment]);
-
-  useEffect(() => {
-    if (workOrderDetails != null) {
-      console.log(workOrderDetails);
-
-      setSavePayment(workOrderDetails.Invoice.Save_Payment)
-    }
-  }, [workOrderDetails]);
+  }, [params.id]);
 
   const fetchData = async () => {
     try {
       const response = await fetch(`http://localhost:3001/api/work-orders/${params.id}`);
       const data = await response.json();
       setWorkOrderDetails(data);
+      savePayment.current = data.Invoice.Save_Payment
       setAllBids(data.Bids_Page.All_Bids);
       setInvoiceItems(data.Invoice.Contractor.invoiceItems)
       setClientInvoiceItems(data.Invoice.Client.invoiceItems)
@@ -77,6 +72,7 @@ const Invoice = () => {
 
     updatedItems[index].total = updatedItems[index].qty * updatedItems[index].price;
     isClient ? setClientInvoiceItems(updatedItems) : setInvoiceItems(updatedItems);
+    setTempArray((prevArray) => [...prevArray, newLine])
     calculateTotals(isClient ? updatedItems : invoiceItems, isClient);
   };
 
@@ -116,9 +112,9 @@ const Invoice = () => {
   const addNewItem = (isClient = false) => {
     const newItem = { description: '', qty: 0, price: 0, total: 0, comment: '' };
     if (isClient) {
-      setClientInvoiceItems([...clientInvoiceItems, newItem]);
+      setClientInvoiceItems((prevClientItems) => [...prevClientItems, newItem]);
     } else {
-      setInvoiceItems([...invoiceItems, newItem]);
+      setInvoiceItems((prevItems) => [...prevItems, newItem]);
     }
   };
 
@@ -197,17 +193,17 @@ const Invoice = () => {
 
   // Handles changes in contractor payment fields and updates state
   const handlePaymentChange = (field, value) => {
-    setSavePayment({
-      ...savePayment,
+    savePayment.current = {
+      ...savePayment.current,
       [field]: value,
-    });
+    };
   };
 
   // Save contractor payment data to the database
   const saveContractorPayment = async () => {
     try {
       const payload = {
-        ...savePayment,
+        ...savePayment.current,
         workOrderId: params.id,
       };
 
@@ -480,7 +476,7 @@ const Invoice = () => {
           <div className="input-group">
             <label>Payment Date</label>
             <input
-              value={savePayment.Payment_Date || ""}
+              value={savePayment.current.Payment_Date || ""}
               type="date"
               onChange={(e) => handlePaymentChange('Payment_Date', e.target.value)}
             />
@@ -489,7 +485,7 @@ const Invoice = () => {
             <label>Amount</label>
             <input
               type="text"
-              value={savePayment.Amount || ""}
+              value={savePayment.current.Amount || ""}
               placeholder="Enter Amount"
               onChange={(e) => handlePaymentChange('Amount', e.target.value)}
             />
@@ -498,7 +494,7 @@ const Invoice = () => {
             <label>Check Number #</label>
             <input
               type="text"
-              value={savePayment.Check_Number || ""}
+              value={savePayment.current.Check_Number || ""}
               placeholder="Enter Check #"
               onChange={(e) => handlePaymentChange('Check_Number', e.target.value)}
             />
@@ -507,7 +503,7 @@ const Invoice = () => {
             <label>Comment</label>
             <input
               type="text"
-              value={savePayment.Comment || ""}
+              value={savePayment.current.Comment || ""}
               placeholder="Enter Comment"
               onChange={(e) => handlePaymentChange('Comment', e.target.value)}
             />
@@ -516,7 +512,7 @@ const Invoice = () => {
             <input
               type="checkbox"
               id="charge-back"
-              checked={savePayment.Charge_Back || false}
+              checked={savePayment.current.Charge_Back || false}
               onChange={(e) => handlePaymentChange('Charge_Back', e.target.checked)}
             />
             <label htmlFor="charge-back">Charge Back</label>

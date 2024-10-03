@@ -4,25 +4,24 @@ import { useParams } from 'react-router-dom';
 
 const PhotosDocuments = () => {
   const params = useParams();
-  const [workOrderDetails, setWorkOrderDetails] = useState(null);
-  const [originalAllRows, setOriginalAllRows] = useState([]);
   const [allRows, setAllRows] = useState([]);
-  const [uploadedPhotos, setUploadedPhotos] = useState({});
   const [selectedTabs, setSelectedTabs] = useState({});
   // State to track the currently visible row
   const [visibleRowIndex, setVisibleRowIndex] = useState(null);
   const [modalImage, setModalImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [canceledImages, setCanceledImages] = useState([]);
+  const [isEditing, setIsEditing] = useState(false); // New state for editing mode
+  const [userType, setUserType] = useState('');
 
-
-
+  // Get userType from localStorage (or from your auth system)
   useEffect(() => {
-    console.log("workOrderDetails->", workOrderDetails);
-    console.log("uploadedPhotos->", uploadedPhotos);
-    console.log("allRows->", allRows);
+    const storedUserType = localStorage.getItem('userType');
+    setUserType(storedUserType);
+  }, []);
 
-  }, [workOrderDetails, uploadedPhotos, allRows]);
+
 
   useEffect(() => {
     fetchData();
@@ -32,8 +31,6 @@ const PhotosDocuments = () => {
     try {
       const response = await fetch(`http://localhost:3001/api/work-orders/${params.id}`);
       const data = await response.json();
-      setWorkOrderDetails(data);
-      setOriginalAllRows(data.photos_page);
       setAllRows(data.photos_page);
 
       // Initialize default selected tab for each row
@@ -50,26 +47,6 @@ const PhotosDocuments = () => {
     }
   };
 
-  const fetchItemRows = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/api/photo-items');
-      if (!response.ok) {
-        throw new Error('Failed to fetch Item Rows');
-      }
-
-      const data = await response.json();
-
-      setItemRows(data); // Update the state with the fetched images
-    } catch (error) {
-      console.error('Error fetching images:', error);
-    }
-  };
-
-  useEffect(() => {
-    // Fetch images when the component loads
-    fetchItemRows();
-  }, []);
-
   const handleTabClick = (rowName, tab) => {
     setSelectedTabs((prevTabs) => ({
       ...prevTabs,
@@ -79,14 +56,22 @@ const PhotosDocuments = () => {
 
   const handleFileSelect = (event, rowName, allActiveTab) => {
     const tab = allActiveTab[rowName]; // Get the selected tab for the specific row
-    console.log("tab-> ", tab, rowName);
 
     if (!rowName || !tab) {
       return;
     }
 
     const files = Array.from(event.target.files);
-    const updatedPhotos = files.map(file => ({
+
+    // Filter files to only allow images (e.g., JPEG, PNG, GIF, WebP)
+    const validImageFiles = files.filter(file => file.type.startsWith('image/'));
+
+    if (validImageFiles.length === 0) {
+      alert('Please upload only image files (JPEG, PNG, GIF, WebP).');
+      return;
+    }
+
+    const updatedPhotos = validImageFiles.map(file => ({
       imgUrl: URL.createObjectURL(file),
       altText: file.name,
       file: file // Keep original file for submission
@@ -121,7 +106,16 @@ const PhotosDocuments = () => {
     }
 
     const files = Array.from(event.dataTransfer.files);
-    const updatedPhotos = files.map(file => ({
+
+    // Filter files to only allow images
+    const validImageFiles = files.filter(file => file.type.startsWith('image/'));
+
+    if (validImageFiles.length === 0) {
+      alert('Please upload only image files (JPEG, PNG, GIF, WebP).');
+      return;
+    }
+
+    const updatedPhotos = validImageFiles.map(file => ({
       imgUrl: URL.createObjectURL(file),
       altText: file.name,
       file: file // Keep original file for submission
@@ -157,8 +151,11 @@ const PhotosDocuments = () => {
     const tab = selectedTabs[rowName];
     const photosToSubmit = row?.child_item?.find(child => child.item_Name === tab)?.photos || [];
 
-    if (photosToSubmit.length === 0) {
-      alert("No images to submit.");
+    // Filter canceled images for the current row and tab
+    const canceledImagesForRowAndTab = canceledImages.filter(img => img.rowName === rowName && img.tab === tab);
+
+    if (photosToSubmit.length === 0 && canceledImagesForRowAndTab.length === 0) {
+      alert("No images to submit or remove.");
       return;
     }
 
@@ -172,6 +169,11 @@ const PhotosDocuments = () => {
     formData.append('rowName', rowName);
     formData.append('tab', tab);  // Append the selected tab for this row
 
+    // Append only the filtered canceled images for removal
+    canceledImagesForRowAndTab.forEach(canceledImage => {
+      formData.append('canceledImages', canceledImage.imgUrl); // Use 'canceledImages' as the key
+    });
+
     try {
       const response = await fetch(`http://localhost:3001/upload-docs/${params.id}`, {
         method: 'POST',
@@ -180,6 +182,9 @@ const PhotosDocuments = () => {
 
       if (response.ok) {
         alert('Images submitted successfully!');
+
+        // Clear only the canceled images for this row and tab after successful submission
+        setCanceledImages(prev => prev.filter(img => img.rowName !== rowName || img.tab !== tab));
       } else {
         alert('Failed to submit images.');
       }
@@ -191,7 +196,6 @@ const PhotosDocuments = () => {
     }
   };
 
-  // Handle removing an image before submission
   const handleRemoveImage = (rowName, index) => {
     const tab = selectedTabs[rowName]; // Get the selected tab for the specific row
     if (!rowName || !tab) {
@@ -205,6 +209,15 @@ const PhotosDocuments = () => {
             ...row,
             child_item: row.child_item.map(child => {
               if (child.item_Name === tab) {
+                const canceledImage = child.photos[index];
+
+                // Add the canceled image URL with rowName and tabName to canceledImages
+                setCanceledImages(prev => [
+                  ...prev,
+                  { imgUrl: canceledImage.imgUrl || canceledImage.url, rowName, tab }
+                ]);
+
+                // Filter out the removed image
                 return {
                   ...child,
                   photos: child.photos.filter((_, i) => i !== index)
@@ -251,9 +264,19 @@ const PhotosDocuments = () => {
     <div className="photos-documents-container">
       <h1>Photos / Documents</h1>
 
-      {/* Display total photo count */}
-      <div className="photo-count">
-        Photos: {getTotalPhotosCount() || 0} {/* Total photo count */}
+      <div>
+        <div>
+          {userType != 'Client' && (
+            <button onClick={() => setIsEditing((prev) => !prev)}>
+              {isEditing ? 'Stop Editing' : 'Start Editing'}
+            </button>
+          )}
+        </div>
+
+        {/* Display total photo count */}
+        <div className="photo-count">
+          Photos: {getTotalPhotosCount() || 0} {/* Total photo count */}
+        </div>
       </div>
 
       {/* Iterate over all rows */}
@@ -303,9 +326,12 @@ const PhotosDocuments = () => {
                                     alt={photo.altText || `Image ${photoIndex}`}
                                     onClick={() => handleImageClick(photo)}
                                   />
-                                  <button className="remove-button" onClick={() => handleRemoveImage(rowName, photoIndex)}>
-                                    X
-                                  </button>
+
+                                  {isEditing && (
+                                    <button className="remove-button" onClick={() => handleRemoveImage(rowName, photoIndex)}>
+                                      X
+                                    </button>
+                                  )}
                                 </div>
                               ))
                             ) : (
@@ -316,40 +342,48 @@ const PhotosDocuments = () => {
                   </div>
 
                   {/* Submit button for each row's selected tab */}
-                  <div>
-                    {singleRow.child_item.some(
-                      (child) => child.item_Name === selectedTabs[rowName] && child.photos?.length > 0
-                    ) && (
-                        <button
-                          className="submit-button"
-                          onClick={() => handleSubmit(rowName)}
-                          disabled={isSubmitting} // Disable the button when submitting
-                        >
-                          {isSubmitting ? "Submitting..." : "Submit Photos"} {/* Show text based on submitting state */}
-                        </button>
-                      )}
-                  </div>
+                  {isEditing && (
+                    <div>
+                      {singleRow.child_item.some(
+                        (child) => child.item_Name === selectedTabs[rowName] && (child.photos?.length > 0 || (canceledImages.filter(img => img.rowName === rowName && img.tab === selectedTabs[rowName]).length > 0))
+                      ) && (
+                          <button
+                            className="submit-button"
+                            onClick={() => handleSubmit(rowName)}
+                            disabled={isSubmitting} // Disable the button when submitting
+                          >
+                            {(canceledImages.filter(img => img.rowName === rowName && img.tab === selectedTabs[rowName]).length > 0)
+                              ? "Yes, delete it"
+                              : (isSubmitting ? "Submitting..." : "Submit Photos")}
+                          </button>
+                        )}
+                      {(canceledImages.filter(img => img.rowName === rowName && img.tab === selectedTabs[rowName]).length > 0)
+                        && <button onClick={() => (location.reload())}> No, Keep it </button>}
+                    </div>
+                  )}
 
                   {/* Upload and Drag-and-Drop area */}
-                  <div
-                    className="upload-area"
-                    onDrop={(e) => handleDrop(e, rowName)}
-                    onDragOver={handleDragOver}
-                  >
-                    <div className="drag-drop-box">Drag And Drop</div>
-                    <div className="upload-button" onClick={() => document.getElementById(`fileInput_${rowIndex}`).click()}>
-                      Upload Photos
+                  {isEditing && (
+                    <div
+                      className="upload-area"
+                      onDrop={(e) => handleDrop(e, rowName)}
+                      onDragOver={handleDragOver}
+                    >
+                      <div className="drag-drop-box">Drag And Drop</div>
+                      <div className="upload-button" onClick={() => document.getElementById(`fileInput_${rowIndex}`).click()}>
+                        Upload Photos
+                      </div>
+                      <input
+                        id={`fileInput_${rowIndex}`}
+                        type="file"
+                        multiple
+                        name="photos"
+                        style={{ display: 'none' }}
+                        onChange={(e) => handleFileSelect(e, rowName, selectedTabs)}
+                        disabled={isSubmitting} // Disable file input when submitting
+                      />
                     </div>
-                    <input
-                      id={`fileInput_${rowIndex}`}
-                      type="file"
-                      multiple
-                      name="photos"
-                      style={{ display: 'none' }}
-                      onChange={(e) => handleFileSelect(e, rowName, selectedTabs)}
-                      disabled={isSubmitting} // Disable file input when submitting
-                    />
-                  </div>
+                  )}
                 </div>
               )}
             </div>
