@@ -1,13 +1,29 @@
 .bid-completion-container {
-  font-family: Arial, sans-serif;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  margin: 0 40px;
 }
 
-h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
+.bid-page-headline {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-top: 15px;
+}
+
+.bid-page-headline>h1 {
+  font-size: 35px;
+  margin-bottom: 30px;
+}
+
+.bid-page-headline>button {
+  height: 35px;
+  background: white;
+  border: navajowhite;
+  box-shadow: 0 0 10px 0 #d3d3d3;
+}
+
+.checkbox-in-docs-page {
+  width: 20px;
+  height: 20px;
 }
 
 .button-group {
@@ -16,31 +32,145 @@ h1 {
   margin-bottom: 20px;
 }
 
+.button-group>div {
+  gap: 20px;
+  display: flex;
+}
 
-.main-content {
-  background-color: #f9f9f9;
+.button-group>div>button {
+  width: 80px;
+  height: 36px;
+  border-radius: 5px;
+  border: none;
+  background: white;
+  font-size: 15px;
+  box-shadow: 0 0 10px 0px #cecece7d;
+}
+
+.bid-completion-container>.main-content {
+  background-color: #EDEDED;
   padding: 20px;
   border-radius: 8px;
 }
 
-table {
+.tr-bid-info-row>th {
+  border: none;
+  text-align: center;
+  background-color: transparent;
+}
+
+.tr-bid-info-row>.Bid-Info {
+  background-color: white;
+}
+
+.tr-CONTRACTOR-CLIENT-row>th {
+  border: none;
+  text-align: center;
+  background-color: transparent;
+}
+
+.tr-CONTRACTOR-CLIENT-row>#CONTRACTOR-th {
+  background: #EBA15B;
+  color: #ffffff;
+}
+
+.tr-CONTRACTOR-CLIENT-row>#CLIENT-th {
+  background: #443BFF;
+  color: #ffffff;
+}
+
+.tr-sub-items-row>th {
+  color: white;
+  background: black;
+  border: none;
+  font-weight: 400;
+  text-align: center;
+}
+
+.tr-per-bid-infos>td {
+  text-align: center;
+  background: transparent;
+  border: none;
+}
+
+.tr-per-bid-infos-1> {
+  background-color: #D6D6D6;
+}
+
+.tr-per-bid-infos-0 {
+  background-color: #E0E0E0;
+}
+
+.tr-per-bid-infos>.CONTRACTOR-td {
+  background-color: #D9CCBF;
+}
+
+.tr-per-bid-infos>.CLIENT-td {
+  background-color: #443bff17;
+}
+
+.amount-with-sign {
+  position: relative;
+  display: inline-block;
+}
+
+.amount-with-sign>span {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointerEvents: none;
+  color: #555;
+}
+
+.amount-with-sign>input[type="number"] {
   width: 100%;
-  border-collapse: collapse;
+  height: 30px;
+  border: none;
+  border-radius: 3px;
+  padding-left: 23px !important;
+  padding: 5%;
 }
 
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
+.tr-per-bid-infos>td>input[type="number"] {
+  width: 100%;
+  height: 30px;
+  border: none;
+  border-radius: 3px;
+  padding: 5%;
 }
 
-th {
-  background-color: #f0f0f0;
-  font-weight: bold;
+.tr-per-bid-infos>td>input[type="text"] {
+  height: 30px;
+  border: none;
+  border-radius: 3px;
+  padding: 10px;
+}
+
+.tr-per-bid-infos>td>textarea {
+  border: none;
+  border-radius: 3px;
+  padding: 10px;
+  width: 100%;
+  overflow: hidden;
+  resize: none;
+  height: 30px;
+  align-items: center;
+  display: grid;
+}
+
+.tr-total-row>th {
+  border: none;
+  background-color: transparent;
 }
 
 .add-line-button {
-  margin-bottom: 20px;
+  margin: 10px 0 0 0;
+  padding: 6px 7px;
+  background: white;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 0 10px 0px #cecece7d;
 }
 
 .total-display {
@@ -52,15 +182,18 @@ th {
 .total-contractor,
 .total-client {
   padding: 10px;
-  border-radius: 4px;
 }
 
 .total-contractor {
-  background-color: #ffe0b2;
+  background: #EBA15B;
+  color: #ffffff;
+  margin-top: 30px;
 }
 
 .total-client {
-  background-color: #bbdefb;
+  background: #443BFF;
+  color: #ffffff;
+  margin-top: 30px;
 }
 
 .comments-section,
@@ -78,4 +211,53 @@ textarea {
 h2 {
   font-size: 18px;
   margin-bottom: 10px;
+}
+
+
+/* deleted and done table */
+.bids-section {
+  max-width: 100%;
+  overflow-x: auto;
+  margin-bottom: 100px;
+  display: grid;
+  gap: 20px;
+}
+
+.bids-table {
+  width: 100%;
+  table-layout: fixed; /* Fixed table layout for predictable column widths */
+}
+
+.bids-table>thead>tr>th,
+.bids-table>tbody>tr>td {
+  padding: 8px 12px;
+  text-align: left;
+  border: 1px solid #ddd; /* Border between cells */
+}
+
+.bids-table>thead>tr>th {
+  background-color: #f2f2f2; /* Light background for headers */
+}
+
+/* Specific styles for comment columns */
+.bids-table>tbody>tr>.client-comments,
+.bids-table>tbody>tr>.completion-comments {
+  overflow: auto;
+}
+
+.action-btn {
+  margin-right: 5px; /* Space between action buttons */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .bids-table>thead>tr>th, .bids-table>tbody>tr>td {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .bids-table>tbody>tr>.client-comments,
+  .bids-table>tbody>tr>.completion-comments {
+    max-width: 100px; /* Narrower comment section on small screens */
+  }
 }

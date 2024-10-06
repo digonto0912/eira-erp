@@ -179,20 +179,22 @@ const BidCompletionNotes = () => {
       setCheckedBids([...checkedBids, _id]);
     }
   };
-  
+
   // Update status when "Done" is clicked
   const handleDoneClick = () => {
     const updatedBids = allBids.map((bid) => {
       if (checkedBids.includes(bid._id) && bid.description != "" && bid.Qty > 0) {
         return { ...bid, Status: 1 };
       }
+
       return bid;
     });
 
     // i don't use that time but for next time datas update set is important
     setAllBids(updatedBids);
-
     handleStatusSave(updatedBids);
+
+    location.reload()
 
   };
 
@@ -205,11 +207,10 @@ const BidCompletionNotes = () => {
       return bid;
     });
     setAllBids(updatedBids);
-
     handleStatusSave(updatedBids);
+
+    location.reload()
   };
-
-
 
   const handleUndoDeleteSave = async (updatedBids) => {
     const All_Bids = updatedBids.map((item, _id) => ({
@@ -274,19 +275,22 @@ const BidCompletionNotes = () => {
     return <div>Loading...</div>;
   }
 
+
+
   return (
     <div className="bid-completion-container">
-      <h1>Bid Completion Notes</h1>
-
-      <div className="button-group">
-        <button onClick={() => setShowPastBids(!showPastBids)}>Show Past Bids</button>
+      <div className='bid-page-headline'>
+        <h1>Bid Completion Notes</h1>
+        <button onClick={() => setShowPastBids(!showPastBids)} className="show-past-btn">Show Past Bids</button>
       </div>
 
+
+      {/* deleted and done bids table */}
       <div>
         {showPastBids && (
-          <div className="past-bids">
+          <div className="bids-section">
             <h2>Completion</h2>
-            <table>
+            <table className="bids-table">
               <thead>
                 <tr>
                   <th>DESCRIPTION</th>
@@ -306,19 +310,18 @@ const BidCompletionNotes = () => {
                   .filter((bid) => bid.Status === 1) // Show only items with Status 1
                   .map((bid, index) => (
                     <tr key={bid._id}>
-                      <td>{bid.Status}</td>
                       <td>{bid.description}</td>
                       <td>{bid.Qty}</td>
                       <td>{bid.contractor_Price}</td>
                       <td>{(bid.contractor_Price * bid.Qty).toFixed(2)}</td>
                       <td>{bid.Client_Price}</td>
                       <td>{(bid.Client_Price * bid.Qty).toFixed(2)}</td>
-                      <td>{bid.Client_comments}</td>
+                      <td className="client-comments">{bid.Client_comments}</td>
                       <td>{bid.Completion_Total}</td>
-                      <td>{bid.Completion_comments}</td>
+                      <td className="completion-comments">{bid.Completion_comments}</td>
                       <td>
-                        <button onClick={() => handleUndo(bid._id)}>Undo</button>
-                        <button onClick={() => handlePermanentDelete(bid._id)}>Permanent Delete</button>
+                        <button className="action-btn" onClick={() => handleUndo(bid._id)}>Undo</button>
+                        <button className="action-btn" onClick={() => handlePermanentDelete(bid._id)}>Permanent Delete</button>
                       </td>
                     </tr>
                   ))}
@@ -326,7 +329,7 @@ const BidCompletionNotes = () => {
             </table>
 
             <h2>Deleted</h2>
-            <table>
+            <table className="bids-table">
               <thead>
                 <tr>
                   <th>DESCRIPTION</th>
@@ -346,19 +349,18 @@ const BidCompletionNotes = () => {
                   .filter((bid) => bid.Status === -1) // Show only items with Status -1
                   .map((bid) => (
                     <tr key={bid._id}>
-                      <td>{bid.Status}</td>
                       <td>{bid.description}</td>
                       <td>{bid.Qty}</td>
                       <td>{bid.contractor_Price}</td>
                       <td>{(bid.contractor_Price * bid.Qty).toFixed(2)}</td>
                       <td>{bid.Client_Price}</td>
                       <td>{(bid.Client_Price * bid.Qty).toFixed(2)}</td>
-                      <td>{bid.Client_comments}</td>
+                      <td className="client-comments">{bid.Client_comments}</td>
                       <td>{bid.Completion_Total}</td>
-                      <td>{bid.Completion_comments}</td>
+                      <td className="completion-comments">{bid.Completion_comments}</td>
                       <td>
-                        <button onClick={() => handleUndo(bid._id)}>Undo</button>
-                        <button onClick={() => handlePermanentDelete(bid._id)}>Permanent Delete</button>
+                        <button className="action-btn" onClick={() => handleUndo(bid._id)}>Undo</button>
+                        <button className="action-btn" onClick={() => handlePermanentDelete(bid._id)}>Permanent Delete</button>
                       </td>
                     </tr>
                   ))}
@@ -370,7 +372,10 @@ const BidCompletionNotes = () => {
 
 
 
+      {/* bids complete box */}
       <div className="main-content">
+
+        {/* top 4 button */}
         <div className="button-group">
           <div>
             <button onClick={handleSave}>Save</button>
@@ -384,18 +389,27 @@ const BidCompletionNotes = () => {
 
         <table>
           <thead>
-            <tr>
+            <tr className='tr-bid-info-row'>
               <th></th>
-              <th>ITEM/DESCRIPTION</th>
-              <th>QTY</th>
-              <th colSpan="2">CONTRACTOR</th>
-              <th colSpan="3">CLIENT</th>
+              <th></th>
+              <th></th>
+              <th colSpan="5" className='Bid-Info'>Bid Info</th>
               <th colSpan="2">Completion Info</th>
             </tr>
-            <tr>
+            <tr className='tr-CONTRACTOR-CLIENT-row'>
               <th></th>
               <th></th>
               <th></th>
+              <th colSpan="2.7" id="CONTRACTOR-th">CONTRACTOR</th>
+              <th colSpan="3" id="CLIENT-th">CLIENT</th>
+              <th colSpan="2"></th>
+            </tr>
+            <tr className='tr-sub-items-row'>
+              <th>
+                <input type="checkbox" className='checkbox-in-docs-page' />
+              </th>
+              <th>ITEM/DESCRIPTION</th>
+              <th>QTY</th>
               <th>PRICE</th>
               <th>TOTAL</th>
               <th>PRICE</th>
@@ -405,24 +419,24 @@ const BidCompletionNotes = () => {
               <th>COMMENTS</th>
             </tr>
           </thead>
+
           <tbody>
+            {/* all bids */}
             {allBids.map((bid, index) => {
-              
+
               if (bid.Status === -1 || bid.Status === 1) {
                 return
               }
 
               return (
-                <tr key={bid._id}>
+                <tr key={bid._id} className={`tr-per-bid-infos-${(index + 1) % 2} tr-per-bid-infos`}>
                   <td>
                     <input
+                      className="checkbox-in-docs-page"
                       type="checkbox"
                       checked={checkedBids.includes(bid._id)}
                       onChange={() => handleCheckboxChange(bid._id)}
                     />
-                  </td>
-                  <td>
-                    {bid.Status}
                   </td>
                   <td>
                     <input
@@ -438,27 +452,53 @@ const BidCompletionNotes = () => {
                       onChange={(e) => handleBidChange(index, 'Qty', e.target.value)}
                     />
                   </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={bid.contractor_Price}
-                      onChange={(e) => handleBidChange(index, 'contractor_Price', e.target.value)}
-                    />
+                  <td className="CONTRACTOR-td">
+                    <div className="amount-with-sign">
+                      <span>
+                        $
+                      </span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={bid.contractor_Price}
+                        onChange={(e) => handleBidChange(index, 'contractor_Price', e.target.value)}
+                      />
+                    </div>
                   </td>
-                  <td>{(bid.Qty * bid.contractor_Price).toFixed(2)}</td>
-                  <td>
+                  <td className="CONTRACTOR-td">
                     <input
-                      type="number"
-                      value={bid.Client_Price}
-                      onChange={(e) => handleBidChange(index, 'Client_Price', e.target.value)}
-                    />
+                      type='number'
+                      value={(bid.Qty * bid.contractor_Price).toFixed(2)}
+                      readOnly />
                   </td>
-                  <td>{(bid.Qty * bid.Client_Price).toFixed(2)}</td>
-                  <td>
+                  <td className="CLIENT-td">
+                    <div className="amount-with-sign">
+                      <span>
+                        $
+                      </span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={bid.Client_Price}
+                        onChange={(e) => handleBidChange(index, 'Client_Price', e.target.value)}
+                      />
+                    </div>
+                  </td>
+                  <td className="CLIENT-td">
                     <input
+                      type='number'
+                      value={(bid.Qty * bid.Client_Price).toFixed(2)}
+                      readOnly />
+                  </td>
+                  <td className="CLIENT-td">
+                    <textarea
                       value={bid.Client_comments}
-                      type="text"
                       onChange={(e) => handleBidChange(index, 'Client_comments', e.target.value)}
+                      rows="1"
+                      onInput={(e) => {
+                        e.target.style.height = 'auto';
+                        e.target.style.height = `${e.target.scrollHeight}px`; // Set height based on content
+                      }}
                     />
                   </td>
                   <td>
@@ -478,20 +518,29 @@ const BidCompletionNotes = () => {
                 </tr>
               )
             })}
+
+            {/* total amount of client & contractor */}
+            <tr className='tr-total-row'>
+              <th colSpan="4">
+                <button onClick={handleAddLine} className="add-line-button">+ Add Line</button>
+              </th>
+              <th>
+                <div className="total-contractor">
+                  Total: $ {totalContractor}
+                </div>
+              </th>
+              <th></th>
+              <th>
+                <div className="total-client">
+                  Total: $ {totalClient}
+                </div>
+              </th>
+              <th colSpan="2"></th>
+            </tr>
           </tbody>
         </table>
 
-        <button onClick={handleAddLine} className="add-line-button">+ Add Line</button>
-
-        <div className="total-display">
-          <div className="total-contractor">
-            Total Contractor: $ {totalContractor}
-          </div>
-          <div className="total-client">
-            Total Client: $ {totalClient}
-          </div>
-        </div>
-
+        {/* bids page comment and headline section */}
         <div className="comments-section">
           <h2>Comments/Notes</h2>
           <textarea

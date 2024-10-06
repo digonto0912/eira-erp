@@ -19,3 +19,21 @@ body {
 .d-flex {
   display: flex;
 }
+
+.bg-red{
+  /* background:red !important;
+  color: black;
+  font-weight: bold;
+  border: 1px solid black; */
+}
+
+.bg-yellow{
+  /* background:rgb(255, 251, 0) !important;
+  color: black;
+  font-weight: bold;
+  border: 1px solid black; */
+}
+
+.bg-dark-red{
+  /* background:rgb(170, 0, 0) !important; */
+}

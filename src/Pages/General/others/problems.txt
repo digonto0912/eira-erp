@@ -1,5 +1,0 @@
-1. in general page w.o. items editing time buttton come [save, delete]. if in this time you click delete that time this row delete but after delete start a problem that is - next row start editing, and show deleted row value's in this next row.
-
-solution: now make when editing is {true}. that time never show delete button, show cancel button but when click in cancel start reloading the page.
-
-2. never removing general page original code for risk ignoring purpose. remove before production.

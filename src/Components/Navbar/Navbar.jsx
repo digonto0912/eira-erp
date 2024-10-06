@@ -17,27 +17,40 @@ function Navbar() {
         <h1>EIRA™</h1>
         <ul className="nav-links">
 
-          <a href="/Dashboard">
+          <a href="/Dashboard" className="bg-red">
             <li className='active-nav-btn'>Dashboard</li>
           </a>
 
           {userType === 'Office' && (
-            <a href="/Create-Work-Order">
+            <a href="/Create-Work-Order"  className="bg-yellow">
               <li>New Work Order</li>
             </a>
           )}
 
           {userType === 'Office' && (
-            <a href="/Control-Panel">
+            <a href="/Control-Panel" className="bg-yellow">
               <li>Control Panel</li>
             </a>
           )}
 
-          <a href="/Waiting-Payment">
+          <a href="/Waiting-Payment" className="bg-dark-red">
             <li>Waiting Payment</li>
           </a>
-          <a href="/Notification">
+          <a href="/Notification" className="bg-red">
             <li>Notification</li>
+          </a>
+
+          <a href="/Notification" className="bg-red">
+            <li>Profile</li>
+          </a>
+          <a href="/Notification" className="bg-red">
+            <li>Interection 3 users</li>
+          </a>
+          <a href="/Notification" className="bg-red">
+            <li>access limitation</li>
+          </a>
+          <a href="/Notification" className="bg-red">
+            <li>3 type Tracking</li>
           </a>
 
         </ul>

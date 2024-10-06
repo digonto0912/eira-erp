@@ -59,7 +59,7 @@
 
 .dashboard-table-checkbox{
     width: 50px;
-    text-align: center;
+    text-align: center !important;
     padding: 0;
 }
 .dashboard-table-checkbox > input{
@@ -68,8 +68,8 @@
     margin: 0;
 }
 
-th,
-td {
+#dashboard-thead > tr>th,
+.clickable-row>td {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

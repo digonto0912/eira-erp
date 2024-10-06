@@ -24,14 +24,14 @@ const WorkOrderSubNavbar = () => {
 
       <button
         onClick={() => handleButtonClick("/General")}
-        className="general-nav-item"
+        className="general-nav-item bg-red"
       >
         General Info
       </button>
 
       <button
         onClick={() => handleButtonClick("/Job-Notes")}
-        className="general-nav-item"
+        className="general-nav-item bg-red"
       >
         Job Notes
       </button>
@@ -39,7 +39,7 @@ const WorkOrderSubNavbar = () => {
       {userType === 'Office' && (
         <button
           onClick={() => handleButtonClick("/Bid-Completion-Notes")}
-          className="general-nav-item"
+          className="general-nav-item bg-red"
         >
           Bid / Completion Info
         </button>
